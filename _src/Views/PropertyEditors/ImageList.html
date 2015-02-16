@@ -1,0 +1,27 @@
+﻿<div class="image-list-editor" ng-controller="ContentArea.PropertyEditors.ImageListController">
+    <div ui-sortable="sortableOptions" ng-model="images">
+        <div class="image"
+             ng-repeat="image in images"
+             ng-mouseover="selectImage(image)"
+             ng-mouseleave="unselectImage()">
+
+            <div class="icon-centering-wrapper" ng-if="!image.id">
+                <i class="icon icon-picture" ng-click="updateImage(image)"></i>
+            </div>
+
+            <div ng-if="image.id">
+                <img ng-src="{{image.thumbnailUrl}}" ng-click="updateImage(image)" />
+                <input type="text" ng-model="image.caption" class="caption" />
+            </div>
+
+            <div ng-show="image == selectedImage" ng-animate="'fade'">
+                <i class="icon icon-trash remove" ng-click="removeImage($index)"></i>
+                <i class="icon icon-navigation move"></i>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" class="button-create" ng-click="addImages()">Add images</button>
+    </div>
+</div>

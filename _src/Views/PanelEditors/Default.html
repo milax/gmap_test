@@ -1,0 +1,4 @@
+﻿<div ng-repeat="property in panel.properties">
+    <strong class="property-editor-title">{{property.name}}:</strong>
+    <div ng-include="property.editorPath" class="property-editor"></div>
+</div>

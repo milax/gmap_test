@@ -1,0 +1,10 @@
+﻿<div ng-controller="ContentArea.PropertyEditors.ImageController" class="image-editor">
+    <div ng-click="setImage()" ng-if="property.value === null">
+        <i class="icon icon-picture large"></i>
+        <div>Click to insert image</div>
+    </div>
+
+    <div ng-if="property.value">
+        <img ng-if="property.value" ng-click="setImage()" ng-src="{{property.value.url}}" />
+    </div>
+</div>

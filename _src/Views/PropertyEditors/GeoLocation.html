@@ -1,0 +1,20 @@
+﻿<ca-geo-location>
+    <div class="location-controls">
+        <div>
+            Search:
+            <div>
+                <input type="text" class="search-box" />
+            </div>
+        </div>
+        <div>
+            Coordinates:
+            <div>
+                <input type="number" step="any" placeholder="latitude" ng-model="position.lat" ng-change="updateMap()" />
+                <input type="number" step="any" placeholder="longitude" ng-model="position.lng" ng-change="updateMap()" />
+            </div>
+        </div>
+    </div>
+    <div class="map">
+        <div class="map-canvas"></div>
+    </div>
+</ca-geo-location>

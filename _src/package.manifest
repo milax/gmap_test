@@ -1,0 +1,22 @@
+{
+	propertyEditors: [
+		{
+			name: "Content Area",
+			alias: "Creuna.Umbraco.CustomProperties.ContentArea",
+			editor: {
+				view: "~/App_Plugins/ContentArea/views/contentarea.html",
+				valueType: "JSON"
+			}
+		}
+	],
+	javascript: [
+		"~/App_Plugins/ContentArea/scripts/contentarea.controllers.js",
+		"~/App_Plugins/ContentArea/scripts/contentarea.directives.js",
+		"~/App_Plugins/ContentArea/scripts/contentarea.resources.js",
+		"~/App_Plugins/ContentArea/scripts/contentarea.paneleditors.js",
+	],
+	css: [
+		"~/App_Plugins/ContentArea/styles/contentarea.css",
+		"~/App_Plugins/ContentArea/styles/contentarea.paneleditors.css"
+	]
+}

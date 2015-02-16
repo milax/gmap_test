@@ -1,0 +1,9 @@
+﻿<div class="ingredient-list" ng-controller="ContentArea.PropertyEditors.IngredientListController">
+    <div ui-sortable="groupSortingOptions" ng-model="groups">
+        <div ng-repeat="group in groups">
+            <ca-ingredient-group></ca-ingredient-group>
+        </div>
+    </div>
+
+    <button type="button" ng-click="addGroup()" class="icon icon-add"></button>
+</div>

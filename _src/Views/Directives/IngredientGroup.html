@@ -1,0 +1,51 @@
+﻿<div class="ingredient-group"
+     ng-mouseover="selectGroup(group)"
+     ng-mouseleave="resetGroupSelection()">
+
+    <div class="ingredient-group__caption">
+        Ingredient group
+    </div>
+
+    <div class="ingredient-group__title">
+        <input type="text" ng-model="group.title" />
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="10%">Quantity</th>
+                <th width="10%">Unit</th>
+                <th width="80%">Name/description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-class="{'saved-ingredient': ingredient != emptyIngredient}"
+                ng-show="isVisible(ingredient)"
+                ng-repeat="ingredient in ingredients">
+
+                <td>
+                    <input type="number" ng-model="ingredient.quantity" />
+                </td>
+                <td>
+                    <input type="text" ng-model="ingredient.unit" />
+                </td>
+                <td>
+                    <input type="text" ng-model="ingredient.description" />
+                </td>
+                <td>
+                    <button type="button" ng-click="removeIngredient($index)" class="icon icon-trash"></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div ng-if="selectedGroup == group" ng-animate="'fade'" class="group-tools">
+        <div class="group-tools-remove icon-wrapper">
+            <i class="icon icon-trash" ng-click="removeGroup($index)"></i>
+        </div>
+
+        <div ng-if="groups.length > 1" class="group-tools-move icon-wrapper">
+            <i class="icon icon-navigation"></i>
+        </div>
+    </div>
+</div>
