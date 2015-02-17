@@ -1,7 +1,19 @@
 var app = angular.module('as3App', []);
 
+app.directive('onFinishRender', function ($timeout) {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attr) {
+      if (scope.$last === true) {
+        $timeout(function () {
+          scope.$emit('ngRepeatFinished', element);
+        });
+      }
+    }
+  };
+});
 
-app.controller('gmapController', function($scope) {
+app.controller('gmapController', function($scope, $q) {
 
   var map, gmaps,
     geocoder, searchBox;
@@ -44,7 +56,6 @@ app.controller('gmapController', function($scope) {
 
   $scope.lat = '';
   $scope.lng = '';
-
 
   var addMarker = function(e) {
     var marker = new gmaps.Marker({
@@ -151,6 +162,21 @@ app.controller('gmapController', function($scope) {
     $scope.active_center_type = center_types[$scope.selected_center_type];
   };
 
+  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent, element) {
+    function formatOption (opt) {
+      if(!opt.id) {
+        return '';
+      }
+      var option = ('<span style="white-space: nowrap"><img src="' + center_types[opt.element.value].marker_url + '" />' + opt.text + '</span>');
+      return option;
+    }
+
+    $(element).parent().select2({
+      templateResult: formatOption
+    });
+  });
+
   google.maps.event.addDomListener(window, 'load', init);
 
 });
+

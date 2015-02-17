@@ -301,9 +301,9 @@ textarea {
 .field-row {
     margin-bottom: 10px;
 }
-.field-row input,
-.field-row select {
-    width: 170px;
+.gmap-module input,
+.gmap-module select {
+    width: 210px;
     display: block;
 }
 .field-row .search-val {
