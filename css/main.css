@@ -284,6 +284,9 @@ textarea {
 .gmap-module {
     width: 500px;
     margin: 20px;
+    border: 1px dashed #ccc;
+    overflow: hidden;
+    padding: 15px;
 }
 
 .map {
@@ -295,7 +298,14 @@ textarea {
 .fields {
     overflow: hidden;
 }
-.fields input {
-    width: 150px;
+.field-row {
+    margin-bottom: 10px;
+}
+.field-row input {
+    width: 170px;
     display: block;
+}
+.field-row .search-val {
+    width: 100%;
+    box-sizing: border-box;
 }

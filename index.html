@@ -13,12 +13,12 @@
 
 
         <div class="gmap-module" ng-controller="gmapController">
+            <div class="field-row">
+                <label>Search</label>
+                <input type="text" ng-model="searchVal" id="search-val" class="search-val">
+            </div>
             <div id="map" class="map"></div>
             <div class="fields">
-                <div class="field-row">
-                    <label>Search</label>
-                    <input type="text" ng-model="searchVal" >
-                </div>
                 <div class="field-row">
                     <label>Lat</label>
                     <input type="text" ng-model="lat" readonly>
@@ -27,13 +27,18 @@
                     <label>Lng</label>
                     <input type="text" ng-model="lng" readonly>
                 </div>
+                <div class="field-row">
+                    <h2>Address:</h2>
+                    <p>{{address}}</p>
+                </div>
+
             </div>
         </div>
 
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="//code.angularjs.org/1.3.9/angular.min.js"></script>
-        <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+        <script src='//maps.googleapis.com/maps/api/js?sensor=false&libraries=places'></script>
         <script src="js/main.js"></script>
 
     </body>
