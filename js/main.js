@@ -4,7 +4,10 @@ var app = angular.module('as3App', []);
 app.controller('gmapController', function($scope) {
 
   var map, gmaps,
-    geocoder, searchBox, marker;
+    geocoder, searchBox;
+
+  var active_marker;
+  var markers = [];
 
   var mapOptions = {
       disableDoubleClickZoom: true,
@@ -16,12 +19,69 @@ app.controller('gmapController', function($scope) {
       zoom: 6
   };
 
-  var setMarkerPos = function(e) {
-      marker.setPosition(e.latLng);
-      $scope.lat = e.latLng.k;
-      $scope.lng = e.latLng.D;
-      $scope.$apply();
-      getAddress();
+  var center_types = [{
+      name: 'Sprogcenter',
+      marker_url: 'img/marker-pink.png',
+      active_marker_url: 'img/marker-pink-active.png'
+    }, {
+      name: 'Undervisningscenter',
+      marker_url: 'img/marker-cyan.png',
+      active_marker_url: 'img/marker-cyan-active.png'
+    }, {
+      name: 'Kontor',
+      marker_url: 'img/marker-green.png',
+      active_marker_url: 'img/marker-green-active.png'
+    }];
+
+  var ACTIVE_CENTER_TYPE_INDEX = 0;
+
+  $scope.center_types                = center_types;
+  $scope.number_of_centers           = 1;
+  $scope.selected_center_type        = ACTIVE_CENTER_TYPE_INDEX;
+  $scope.active_center_type          = center_types[ACTIVE_CENTER_TYPE_INDEX];
+  $scope.filter_selected_center_type = ACTIVE_CENTER_TYPE_INDEX;
+  $scope.filter_center_type          = center_types[ACTIVE_CENTER_TYPE_INDEX];
+
+  $scope.lat = '';
+  $scope.lng = '';
+
+
+  var addMarker = function(e) {
+    var marker = new gmaps.Marker({
+        map: map,
+        position: e.latLng,
+        icon: $scope.active_center_type.marker_url,
+        draggable: true
+    });
+    gmaps.event.addListener(marker, "dragend", function(e) {
+      setMarkerNewPos(e.latLng);
+    });
+    gmaps.event.addListener(marker, "click", function(e) {
+      setThisMarkerActive(marker);
+    });
+
+    marker.center_type = $scope.active_center_type;
+    markers.push(marker);
+    setThisMarkerActive(marker);
+
+    $scope.lat = e.latLng.k;
+    $scope.lng = e.latLng.D;
+    $scope.$apply();
+    getAddress();
+  };
+
+  var setThisMarkerActive = function(marker) {
+    if(active_marker) {
+      active_marker.setAnimation(null);
+    }
+    active_marker = marker;
+    active_marker.setAnimation(google.maps.Animation.BOUNCE);
+  };
+
+  var setMarkerNewPos = function(location) {
+    $scope.lat = location.k;
+    $scope.lng = location.D;
+    $scope.$apply();
   };
 
   var placesChanged = function() {
@@ -43,7 +103,10 @@ app.controller('gmapController', function($scope) {
   };
 
   var getAddress = function () {
-      geocoder.geocode({ location: marker.getPosition() }, function (result, status) {
+      if(!active_marker) {
+        return;
+      }
+      geocoder.geocode({ location: active_marker.getPosition() }, function (result, status) {
           var address = "";
 
           if (status == gmaps.GeocoderStatus.OK) {
@@ -60,25 +123,32 @@ app.controller('gmapController', function($scope) {
     map = new gmaps.Map(document.getElementById('map'), mapOptions);
     geocoder = new gmaps.Geocoder();
 
-    marker = new gmaps.Marker({
-        map: map,
-        position: mapOptions.center,
-        draggable: true
-    });
-
     var input = document.getElementById('search-val');
     searchBox = new gmaps.places.SearchBox(input);
 
-    gmaps.event.addListener(map, "click", setMarkerPos);
-    gmaps.event.addListener(marker, "dragend", setMarkerPos);
+    gmaps.event.addListener(map, "click", addMarker);
     gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
-
-    $scope.lat = mapOptions.center.lat;
-    $scope.lng = mapOptions.center.lng;
-    $scope.$apply();
 
     getAddress();
 
+  };
+
+
+  $scope.removeCurrentCenter = function() {
+    console.log('remove the current center');
+    return false;
+  };
+
+  $scope.saveCenter = function() {
+    console.log('save!');
+  };
+
+  $scope.filterTypeSelected = function() {
+    $scope.filter_center_type = center_types[$scope.filter_selected_center_type];
+  };
+
+  $scope.typeSelected = function() {
+    $scope.active_center_type = center_types[$scope.selected_center_type];
   };
 
   google.maps.event.addDomListener(window, 'load', init);

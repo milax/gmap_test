@@ -13,12 +13,30 @@
 
 
         <div class="gmap-module" ng-controller="gmapController">
+            <div style="border: 1px dashed #069; padding: 15px; margin-bottom: 25px;">
+                <h2>Added centers: {{number_of_centers}}</h2>
+                <p>
+                    Filter by type of center: 
+                    <img ng-src="{{filter_center_type.marker_url}}">
+                    <select ng-model="filter_selected_center_type" ng-change="filterTypeSelected()">
+                        <option ng-repeat="item in center_types" value="{{$index}}" ng-selected="$index == 0">{{item.name}}</option>
+                    </select>
+                    <button>Filter!</button>
+                </p>
+            </div>
             <div class="field-row">
                 <label>Search</label>
                 <input type="text" ng-model="searchVal" id="search-val" class="search-val">
             </div>
             <div id="map" class="map"></div>
             <div class="fields">
+                <div class="field-row">
+                    <label>Type of center</label>
+                    <img ng-src="{{active_center_type.marker_url}}">
+                    <select ng-model="selected_center_type" ng-change="typeSelected()">
+                        <option ng-repeat="item in center_types" value="{{$index}}">{{item.name}}</option>
+                    </select>
+                </div>
                 <div class="field-row">
                     <label>Lat</label>
                     <input type="text" ng-model="lat" readonly>
@@ -30,6 +48,12 @@
                 <div class="field-row">
                     <h2>Address:</h2>
                     <p>{{address}}</p>
+                </div>
+                <div class="field-row">
+                    <p><button ng-click="saveCenter()">Save center</button></p>
+                </div>
+                <div class="field-row">
+                    <p><a href="#" ng-click="removeCurrentCenter()">Remove the current center</a></p>
                 </div>
 
             </div>
