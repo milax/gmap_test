@@ -26,49 +26,73 @@
                 </p>
             </div> -->
 
-            <div class="field-row">
-                <label>Search</label>
-                <input type="text" ng-model="searchVal" id="search-val" class="search-val">
+
+            <div class="gmap-module__search-box">
+                <h3 class="gmap-module__title">Search address:</h3>
+                <p>
+                    <input type="text" ng-model="search_address" id="search-address" class="gmap-module__search-address">
+                </p>
+                <p>
+                    <label>Add pin to the map: </label>
+                    <input type="checkbox" ng-model="search_is_add_marker">
+                </p>
             </div>
 
-            <div id="map" class="map"></div>
+            <div id="map" class="gmap-module_map"></div>
 
-            <div class="fields">
-                <div class="field-row">
-                    <label>Type of center</label>
-                    <img ng-src="{{active_center_type.marker_url}}">
-                    <select ng-model="active_center_type_index" ng-change="centerTypeSelected()">
-                        <option on-finish-render="ngRepeatFinished" ng-repeat="center in center_types" value="{{$index}}">{{center.name}}</option>
-                    </select>
+            <div class="gmap-module__info-panel">
+
+
+                <div class="gmap-module__opts">
+                    <div class="gmap-module__row">
+                        <p>
+                            <label>Type of center:</label>
+                            <img ng-src="{{active_center_type.marker_url}}">
+                        </p>
+                        <select ng-model="active_center_type_index" ng-change="centerTypeSelected()">
+                            <option on-finish-render="ngRepeatFinished" ng-repeat="center in center_types" value="{{$index}}">{{center.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="gmap-module__row">
+                        <label>Lat</label>
+                        <input type="text" ng-model="lat" readonly>
+                    </div>
+
+                    <div class="gmap-module__row">
+                        <label>Lng</label>
+                        <input type="text" ng-model="lng" readonly>
+                    </div>
                 </div>
 
-                <div class="field-row">
-                    <label>Lat</label>
-                    <input type="text" ng-model="lat" readonly>
+                <div class="gmap-module__address">
+                    <h3 class="gmap-module__title">Address:</h3>
+                    <p ng-show="address">{{address}}</p>
+                    <div class="alert-box" ng-hide="address">
+                        Please add a new center or pick an existing on the map
+                    </div>
                 </div>
 
-                <div class="field-row">
-                    <label>Lng</label>
-                    <input type="text" ng-model="lng" readonly>
-                </div>
+                <!-- Tools -->
+                <div class="gmap-module__tools">
+                    <h3 class="gmap-module__title">Options:</h3>
+                    <div class="gmap-module__row">
+                        <p><a href="" class="gmap-module_icon icn-default-zoom" ng-click="setDefaultZoom()">Set default zoom</a></p>
+                    </div>
 
-                <div class="field-row">
-                    <h2>Address:</h2>
-                    <p>{{address}}</p>
-                </div>
+                    <div class="gmap-module__row" ng-show="address">
+                        <p><a href="" class="gmap-module_icon icn-go-to-marker" ng-click="showActiveMarkerInMapCenter()">Go to the active center</a></p>
+                    </div>
 
-                <div class="alert-box" ng-hide="address">
-                    Please add a new center or pick an existing on the map
-                </div>
 
-                <div class="field-row" ng-show="address">
-                    <p><a href="" ng-click="removeActiveMarker()">Remove the current center</a></p>
-                </div>
-                
-                <div class="field-row" ng-show="isAnyMarkerExists()">
-                    <p><a href="" ng-click="removeAllMarkers()">Remove ALL centers</a></p>
-                </div>
+                    <div class="gmap-module__row" ng-show="address">
+                        <p><a href="" class="gmap-module_icon icn-remove-active" ng-click="removeActiveMarker()">Remove the active center</a></p>
+                    </div>
 
+                    <div class="gmap-module__row" ng-show="isAnyMarkerExists()">
+                        <p><a href="" class="gmap-module_icon icn-remove-all" ng-click="removeAllMarkers()">Remove ALL centers</a></p>
+                    </div>
+                </div>
             </div>
         </div>
 

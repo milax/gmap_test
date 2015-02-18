@@ -162,10 +162,12 @@ app.controller('gmapController', function($scope, $q) {
 
     place = places[0];
 
-    addNewMarker({
-      lat: place.geometry.location.k,
-      lng: place.geometry.location.D
-    });
+    if($scope.search_is_add_marker) {
+      addNewMarker({
+        lat: place.geometry.location.k,
+        lng: place.geometry.location.D
+      });
+    }
 
     map.setCenter(place.geometry.location);
     map.setZoom(14);
@@ -202,13 +204,21 @@ app.controller('gmapController', function($scope, $q) {
     map      = new gmaps.Map(document.getElementById('map'), mapOptions);
     geocoder = new gmaps.Geocoder();
 
-    address_input = document.getElementById('search-val');
+    address_input = document.getElementById('search-address');
     searchBox     = new gmaps.places.SearchBox(address_input);
 
     // attach events
     gmaps.event.addListener(map, "click", addNewMarkerByClick);
     gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
   };
+
+  /**
+  * Set defult zoom
+  */
+  $scope.setDefaultZoom = function() {
+    map.setZoom(mapOptions.zoom);
+  };
+
 
   /**
   * Remove all markers from the map
@@ -220,6 +230,17 @@ app.controller('gmapController', function($scope, $q) {
     info_panel.clearData();
     markers = [];
     return false;
+  };
+
+  /**
+  * Show active marker in the center of map
+  */
+  $scope.showActiveMarkerInMapCenter = function() {
+    map.setCenter({
+      lat: active_marker.position.k,
+      lng: active_marker.position.D
+    });
+    map.setZoom(14);
   };
 
   /**
@@ -253,8 +274,10 @@ app.controller('gmapController', function($scope, $q) {
   */
   $scope.centerTypeSelected = function() {
     $scope.active_center_type = center_types[$scope.active_center_type_index];
-    active_marker.center_type = $scope.active_center_type;
-    active_marker.setIcon(active_marker.center_type.active_marker_url);
+    if(active_marker) {
+      active_marker.center_type = $scope.active_center_type;
+      active_marker.setIcon(active_marker.center_type.active_marker_url);
+    }
   };
 
   /*
