@@ -209,6 +209,8 @@ app.controller('gmapController', function($scope, $q) {
 
   $scope.typeSelected = function() {
     $scope.active_center_type = center_types[$scope.selected_center_type];
+    active_marker.center_type = $scope.active_center_type;
+    active_marker.setIcon(active_marker.center_type.active_marker_url);
   };
 
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent, element) {
