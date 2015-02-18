@@ -199,6 +199,10 @@ app.controller('gmapController', function($scope, $q) {
     return false;
   };
 
+  $scope.isAnyMarker = function() {
+    return markers.length;
+  };
+
   $scope.filterTypeSelected = function() {
     $scope.filter_center_type = center_types[$scope.filter_selected_center_type];
   };
