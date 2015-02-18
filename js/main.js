@@ -48,13 +48,18 @@ app.controller('gmapController', function($scope, $q) {
   // active center type by default
   var ACTIVE_CENTER_TYPE_INDEX = 0;
 
-  $scope.center_types                = center_types;
-  $scope.number_of_centers           = 0;
+  $scope.center_types = center_types;
 
   $scope.active_center_type_index    = ACTIVE_CENTER_TYPE_INDEX;
   $scope.active_center_type          = center_types[ACTIVE_CENTER_TYPE_INDEX];
-  // $scope.filter_selected_center_type = ACTIVE_CENTER_TYPE_INDEX;
-  // $scope.filter_center_type          = center_types[ACTIVE_CENTER_TYPE_INDEX];
+  
+  $scope.filter_selected_center_type_index  = ACTIVE_CENTER_TYPE_INDEX;
+  $scope.filter_selected_center_type        = center_types[ACTIVE_CENTER_TYPE_INDEX];
+  $scope.is_filter_enabled = false;
+  $scope.filtered_markers_number = 0;
+
+  $scope.total_markers_number = 0;
+
 
   $scope.lat     = '';
   $scope.lng     = '';
@@ -87,6 +92,11 @@ app.controller('gmapController', function($scope, $q) {
   * Add new marker with coords
   */
   var addNewMarker = function(coords) {
+    if($scope.is_filter_enabled && ($scope.active_center_type.name !== $scope.filter_selected_center_type.name)) {
+      alert('Please reset filter to add new center to the map!');
+      return;
+    }
+
     var marker = new gmaps.Marker({
         map: map,
         position: coords,
@@ -121,6 +131,7 @@ app.controller('gmapController', function($scope, $q) {
     });
 
     getAddress();
+    setTotalMarkersNumber();
   };
 
   /**
@@ -162,12 +173,10 @@ app.controller('gmapController', function($scope, $q) {
 
     place = places[0];
 
-    if($scope.search_is_add_marker) {
-      addNewMarker({
-        lat: place.geometry.location.k,
-        lng: place.geometry.location.D
-      });
-    }
+    addNewMarker({
+      lat: place.geometry.location.k,
+      lng: place.geometry.location.D
+    });
 
     map.setCenter(place.geometry.location);
     map.setZoom(14);
@@ -219,7 +228,6 @@ app.controller('gmapController', function($scope, $q) {
     map.setZoom(mapOptions.zoom);
   };
 
-
   /**
   * Remove all markers from the map
   */
@@ -229,6 +237,7 @@ app.controller('gmapController', function($scope, $q) {
     }
     info_panel.clearData();
     markers = [];
+    setTotalMarkersNumber();
     return false;
   };
 
@@ -243,6 +252,40 @@ app.controller('gmapController', function($scope, $q) {
     map.setZoom(14);
   };
 
+  $scope.setFilter = function() {
+    var hidden_markers = 0;
+
+    $scope.filter_selected_center_type = center_types[$scope.filter_selected_center_type_index];
+
+    for(var i in markers) {
+      if(markers[i].center_type.name === $scope.filter_selected_center_type.name) {
+        markers[i].setVisible(true);
+      }
+      else {
+        hidden_markers++;
+        markers[i].setVisible(false);
+      }
+    }
+
+    if(hidden_markers) {
+      $scope.filtered_markers_number = $scope.total_markers_number - hidden_markers;
+      $scope.is_filter_enabled = true;
+    }
+    else {
+      $scope.filtered_markers_number = 0;
+      $scope.is_filter_enabled = false;
+    }
+    
+  };
+
+  $scope.resetFilter = function() {
+    for(var i in markers) {
+      markers[i].setVisible(true);
+    }
+    $scope.filtered_markers_number = 0;
+    $scope.is_filter_enabled = false;
+  };
+
   /**
   * Remove active marker from the map
   */
@@ -255,19 +298,21 @@ app.controller('gmapController', function($scope, $q) {
         break;
       }
     }
+    setTotalMarkersNumber();
     return false;
   };
 
   /**
-  * Is any marker exists?
+  * Set total markers number
   */
-  $scope.isAnyMarkerExists = function() {
-    return markers.length;
+  var setTotalMarkersNumber = function() {
+    $scope.total_markers_number = markers.length;
+    $scope.$apply();
   };
 
-  // $scope.filterTypeSelected = function() {
-  //   $scope.filter_center_type = center_types[$scope.filter_selected_center_type];
-  // };
+  $scope.filterTypeSelected = function() {
+    // $scope.filter_selected_center_type = center_types[$scope.filter_selected_center_type_index];
+  };
 
   /**
   * Center type has been selected in selector
