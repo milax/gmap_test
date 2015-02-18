@@ -16,8 +16,8 @@
         <div class="gmap-module" ng-controller="gmapController">
 
             <div class="gmap-module__filter-box">
-                <h3 class="gmap-module__title">Added centers: {{total_markers_number}}</h3>
-                <h3 class="gmap-module__title" ng-show="is_filter_enabled">Shown (filtered) centers: {{filtered_markers_number}}</h3>
+                <h3 class="gmap-module__title">Added centers: {{total_markers_number}} <span class="gmap-module__title" ng-show="is_filter_enabled">| Shown (filtered) centers: {{filtered_markers_number}}</span></h3>
+                
                 <p>
                     Filter by type of center: 
                     <select ng-model="filter_selected_center_type_index" ng-change="filterTypeSelected()">
@@ -57,15 +57,22 @@
                         </select>
                     </div>
 
-                    <div class="gmap-module__row">
-                        <label>Lat</label>
-                        <input type="text" ng-model="lat" readonly>
+                    <div class="gmap-module__row clearfix">
+                        <div class="gmap-module__lat">
+                            <label>Lat</label>
+                            <input type="text" ng-model="lat" readonly>
+                        </div>
+                        <div class="gmap-module__lng">
+                            <label>Lng</label>
+                            <input type="text" ng-model="lng" readonly>
+                        </div>
                     </div>
 
-                    <div class="gmap-module__row">
-                        <label>Lng</label>
-                        <input type="text" ng-model="lng" readonly>
+                    <div class="gmap-module__row" ng-show="address">
+                        <label>Contact details</label>
+                        <textarea ng-model="contact_details" class="gmap-module__contact-details"></textarea>
                     </div>
+
                 </div>
 
                 <div class="gmap-module__address">

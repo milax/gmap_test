@@ -303,15 +303,20 @@ textarea {
     margin-bottom: 10px;
 }
 
-.gmap-module input[type="text"],
 .gmap-module select {
     width: 210px;
     display: block;
 }
 
-.gmap-module input.gmap-module__search-address {
+.gmap-module input[type="text"] {
     width: 100%;
     box-sizing: border-box;
+}
+
+.gmap-module__contact-details {
+    width: 100%;
+    box-sizing: border-box;
+    height: 100px;
 }
 
 .gmap-module__search-box {
@@ -373,6 +378,16 @@ textarea {
 
 .gmap-module .icn-remove-active {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABc0lEQVR4XqWTMUsDQRCFJyjYSFKkSS9XCGKTCEFQNglip1VSpFG0sLGxSSeeaCEp7K2sbOJPkER7EwvBKmid5porBCMyzpvlhjNoYwJf3sybmb3NhMswM03zmVU52ICEwolQER7+6HfCvXCq/Vd3RLjB134lFJg7FywKHPw08CZ6Qvha/NhZ0wLfnKlKDuwQxL/12AHvzbITmK+PgTYgV98DL6lbDbO6xLhetN+XrdVIP/k8xZ2OhtlGgyiKNI67XUr2lL0d+BtEW0uJOoH58hDgqcByqQGXntGv0WYATWInMJ/v/UA8gOH0jP8bP8djiGJxLkc0Gvm4UDB/sk9PeVstJOoEf+2j7TTqSQ24ZMaWOFzJ2xKDVouo10NOw35fNSiVVKlapWG7bUsMHiN/g5fleSf4J++uK8jV95gvPVazJT4vzvnhZlmRHNjCEAtWRy9yO+ApmAkF5nqRRYGTmNLAm+gJbQeDhcy/XqbiK9PUr/M3T3GnVEK0IY4AAAAASUVORK5CYII=);
+}
+
+.gmap-module__lat {
+    float: left;
+    width: 49%;
+}
+
+.gmap-module__lng {
+    float: right;
+    width: 49%;
 }
 
 

@@ -13,7 +13,7 @@ app.directive('onFinishRender', function ($timeout) {
   };
 });
 
-app.controller('gmapController', function($scope, $q) {
+app.controller('gmapController', function($scope, $q, $debounce) {
 
   var map, gmaps,
     geocoder, searchBox;
@@ -149,7 +149,12 @@ app.controller('gmapController', function($scope, $q) {
       lat: active_marker.position.k,
       lng: active_marker.position.D
     });
+    updateContactDetails();
     updateCenterType();
+  };
+
+  var updateContactDetails = function() {
+    $scope.contact_details = active_marker.contact_details;
   };
 
   /**
@@ -307,11 +312,12 @@ app.controller('gmapController', function($scope, $q) {
   */
   var setTotalMarkersNumber = function() {
     $scope.total_markers_number = markers.length;
-    $scope.$apply();
   };
 
-  $scope.filterTypeSelected = function() {
-    // $scope.filter_selected_center_type = center_types[$scope.filter_selected_center_type_index];
+  var applyContactDetails = function() {
+    if(active_marker) {
+      active_marker.contact_details = $scope.contact_details;
+    }
   };
 
   /**
@@ -324,6 +330,13 @@ app.controller('gmapController', function($scope, $q) {
       active_marker.setIcon(active_marker.center_type.active_marker_url);
     }
   };
+
+  $scope.$watch('contact_details', function(newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    $debounce(applyContactDetails, 500);
+  });
 
   /*
   * ng-repeat of element has finished its work
@@ -353,3 +366,79 @@ app.controller('gmapController', function($scope, $q) {
 
 });
 
+app.factory('$debounce', ['$rootScope', '$browser', '$q', '$exceptionHandler',
+
+  function($rootScope, $browser, $q, $exceptionHandler) {
+      var deferreds = {},
+          methods = {},
+          uuid = 0;
+
+      function debounce(fn, delay, invokeApply) {
+          var deferred = $q.defer(),
+              promise = deferred.promise,
+              skipApply = (angular.isDefined(invokeApply) && !invokeApply),
+              timeoutId, cleanup,
+              methodId, bouncing = false;
+
+          // check we dont have this method already registered
+          angular.forEach(methods, function(value, key) {
+              if(angular.equals(methods[key].fn, fn)) {
+                  bouncing = true;
+                  methodId = key;
+              }
+          });
+
+          // not bouncing, then register new instance
+          if(!bouncing) {
+              methodId = uuid++;
+              methods[methodId] = {fn: fn};
+          } else {
+              // clear the old timeout
+              deferreds[methods[methodId].timeoutId].reject('bounced');
+              $browser.defer.cancel(methods[methodId].timeoutId);
+          }
+
+          var debounced = function() {
+              // actually executing? clean method bank
+              delete methods[methodId];
+
+              try {
+                  deferred.resolve(fn());
+              } catch(e) {
+                  deferred.reject(e);
+                  $exceptionHandler(e);
+              }
+
+              if (!skipApply) {
+                  $rootScope.$apply();
+              }
+          };
+
+          timeoutId = $browser.defer(debounced, delay);
+
+          // track id with method
+          methods[methodId].timeoutId = timeoutId;
+
+          cleanup = function() {
+              delete deferreds[promise.$$timeoutId];
+          };
+
+          promise.$$timeoutId = timeoutId;
+          deferreds[timeoutId] = deferred;
+          promise.then(cleanup, cleanup);
+
+          return promise;
+      }
+
+
+      // similar to angular's $timeout cancel
+      debounce.cancel = function(promise) {
+          if (promise && promise.$$timeoutId in deferreds) {
+              deferreds[promise.$$timeoutId].reject('canceled');
+              return $browser.defer.cancel(promise.$$timeoutId);
+          }
+          return false;
+      };
+
+      return debounce;
+  }]);
