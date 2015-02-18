@@ -14,7 +14,7 @@
 
 
         <div class="gmap-module" ng-controller="gmapController">
-            <div style="border: 1px dashed #069; padding: 15px; margin-bottom: 25px;">
+            <div class="filter-box">
                 <h2>Added centers: {{number_of_centers}}</h2>
                 <p>
                     Filter by type of center: 
@@ -50,11 +50,14 @@
                     <h2>Address:</h2>
                     <p>{{address}}</p>
                 </div>
-                <div class="field-row">
-                    <p><button ng-click="saveCenter()">Save center</button></p>
+                <div class="alert-box" ng-hide="address">
+                    Please add a new center or pick an existing on the map
                 </div>
                 <div class="field-row">
                     <p><a href="#" ng-click="removeCurrentCenter()">Remove the current center</a></p>
+                </div>
+                <div class="field-row">
+                    <p><a href="#" ng-click="removeAllCenters()">Remove ALL centers</a></p>
                 </div>
 
             </div>

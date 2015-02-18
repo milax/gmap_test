@@ -18,8 +18,8 @@ app.controller('gmapController', function($scope, $q) {
   var map, gmaps,
     geocoder, searchBox;
 
-  var active_marker;
-  var markers = [];
+  var active_marker, prev_active_marker;
+  var markers = [], marker_index = 0;
 
   var mapOptions = {
       disableDoubleClickZoom: true,
@@ -64,15 +64,26 @@ app.controller('gmapController', function($scope, $q) {
         icon: $scope.active_center_type.marker_url,
         draggable: true
     });
+
     gmaps.event.addListener(marker, "dragend", function(e) {
+      setThisMarkerActive(marker);
       setMarkerNewPos(e.latLng);
+      getAddress();
     });
+
     gmaps.event.addListener(marker, "click", function(e) {
       setThisMarkerActive(marker);
     });
 
+    gmaps.event.addListener(marker, "dblclick", function (e) {
+       return false;
+    });
+
     marker.center_type = $scope.active_center_type;
+    marker.marker_index = marker_index;
+    marker_index++;
     markers.push(marker);
+
     setThisMarkerActive(marker);
 
     $scope.lat = e.latLng.k;
@@ -83,10 +94,14 @@ app.controller('gmapController', function($scope, $q) {
 
   var setThisMarkerActive = function(marker) {
     if(active_marker) {
-      active_marker.setAnimation(null);
+      active_marker.setIcon(active_marker.center_type.marker_url);
     }
     active_marker = marker;
-    active_marker.setAnimation(google.maps.Animation.BOUNCE);
+    active_marker.setIcon(active_marker.center_type.active_marker_url);
+
+    getAddress();
+    updateCoordsWithActiveMarker();
+    updateCenterType();
   };
 
   var setMarkerNewPos = function(location) {
@@ -95,38 +110,57 @@ app.controller('gmapController', function($scope, $q) {
     $scope.$apply();
   };
 
+  var updateCoordsWithActiveMarker = function() {
+    $scope.lat = active_marker.position.k;
+    $scope.lng = active_marker.position.D;
+    $scope.$apply();
+  };
+
+  var updateCenterType = function() {
+    $scope.active_center_type = active_marker.center_type;
+    $scope.$apply();
+  };
+
   var placesChanged = function() {
-      var places = searchBox.getPlaces(), place;
+    var places = searchBox.getPlaces(), place;
 
-      if(!places.length) {
-        return;
-      }
+    if(!places.length) {
+      return;
+    }
 
-      place = places[0];
+    place = places[0];
 
-      marker.setPosition(place.geometry.location);
-      map.setCenter(place.geometry.location);
+    map.setCenter(place.geometry.location);
+    map.setZoom(14);
 
-      $scope.lat = place.geometry.location.k;
-      $scope.lng = place.geometry.location.D;
-      $scope.$apply();
-      getAddress();
+    // $scope.lat = place.geometry.location.k;
+    // $scope.lng = place.geometry.location.D;
+    // $scope.$apply();
+    // getAddress();
   };
 
   var getAddress = function () {
-      if(!active_marker) {
-        return;
+    if(!active_marker) {
+      return;
+    }
+    geocoder.geocode({
+      location: active_marker.getPosition()
+    }, function (result, status) {
+      var address = "";
+
+      if (status == gmaps.GeocoderStatus.OK) {
+        address = result[0].formatted_address;
+        $scope.address = address;
+
+        $scope.$apply();
       }
-      geocoder.geocode({ location: active_marker.getPosition() }, function (result, status) {
-          var address = "";
+    });
+  };
 
-          if (status == gmaps.GeocoderStatus.OK) {
-              address = result[0].formatted_address;
-              $scope.address = address;
-              $scope.$apply();
-          }
-
-      });
+  var clearMarkerDataInPanel = function() {
+    $scope.address = '';
+    $scope.lat = '';
+    $scope.lng = '';
   };
 
   var init = function() {
@@ -144,14 +178,25 @@ app.controller('gmapController', function($scope, $q) {
 
   };
 
-
-  $scope.removeCurrentCenter = function() {
-    console.log('remove the current center');
+  $scope.removeAllCenters = function() {
+    for(var i = 0, len = markers.length; i < len; ++i) {
+      markers[i].setMap(null);
+    }
+    clearMarkerDataInPanel();
+    markers = [];
     return false;
   };
 
-  $scope.saveCenter = function() {
-    console.log('save!');
+  $scope.removeCurrentCenter = function() {
+    for(var i = 0, len = markers.length; i < len; ++i) {
+      if(markers[i].marker_index === active_marker.marker_index) {
+        active_marker.setMap(null);
+        markers.splice(i, 1);
+        clearMarkerDataInPanel();
+        break;
+      }
+    }
+    return false;
   };
 
   $scope.filterTypeSelected = function() {
@@ -172,7 +217,8 @@ app.controller('gmapController', function($scope, $q) {
     }
 
     $(element).parent().select2({
-      templateResult: formatOption
+      templateResult: formatOption,
+      minimumResultsForSearch: 100
     });
   });
 

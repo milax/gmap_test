@@ -310,3 +310,18 @@ textarea {
     width: 100%;
     box-sizing: border-box;
 }
+
+.gmap-module .alert-box {
+    width: 80%;
+    border: 1px dotted #c00;
+    color: #c00;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.gmap-module .filter-box {
+    display: none;
+    border: 1px dashed #069;
+    padding: 15px;
+    margin-bottom: 25px;
+}
