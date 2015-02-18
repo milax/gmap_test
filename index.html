@@ -14,7 +14,7 @@
 
 
         <div class="gmap-module" ng-controller="gmapController">
-            <div class="filter-box">
+<!--             <div class="filter-box">
                 <h2>Added centers: {{number_of_centers}}</h2>
                 <p>
                     Filter by type of center: 
@@ -24,40 +24,49 @@
                     </select>
                     <button>Filter!</button>
                 </p>
-            </div>
+            </div> -->
+
             <div class="field-row">
                 <label>Search</label>
                 <input type="text" ng-model="searchVal" id="search-val" class="search-val">
             </div>
+
             <div id="map" class="map"></div>
+
             <div class="fields">
                 <div class="field-row">
                     <label>Type of center</label>
                     <img ng-src="{{active_center_type.marker_url}}">
-                    <select ng-model="selected_center_type" ng-change="typeSelected()">
-                        <option on-finish-render="ngRepeatFinished" ng-repeat="item in center_types" value="{{$index}}">{{item.name}}</option>
+                    <select ng-model="active_center_type_index" ng-change="centerTypeSelected()">
+                        <option on-finish-render="ngRepeatFinished" ng-repeat="center in center_types" value="{{$index}}">{{center.name}}</option>
                     </select>
                 </div>
+
                 <div class="field-row">
                     <label>Lat</label>
                     <input type="text" ng-model="lat" readonly>
                 </div>
+
                 <div class="field-row">
                     <label>Lng</label>
                     <input type="text" ng-model="lng" readonly>
                 </div>
+
                 <div class="field-row">
                     <h2>Address:</h2>
                     <p>{{address}}</p>
                 </div>
+
                 <div class="alert-box" ng-hide="address">
                     Please add a new center or pick an existing on the map
                 </div>
+
                 <div class="field-row" ng-show="address">
-                    <p><a href="" ng-click="removeCurrentCenter()">Remove the current center</a></p>
+                    <p><a href="" ng-click="removeActiveMarker()">Remove the current center</a></p>
                 </div>
-                <div class="field-row" ng-show="isAnyMarker()">
-                    <p><a href="" ng-click="removeAllCenters()">Remove ALL centers</a></p>
+                
+                <div class="field-row" ng-show="isAnyMarkerExists()">
+                    <p><a href="" ng-click="removeAllMarkers()">Remove ALL centers</a></p>
                 </div>
 
             </div>
