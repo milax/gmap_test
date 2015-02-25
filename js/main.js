@@ -30,19 +30,32 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       zoom: 6
   };
 
+  var IMG_PATH = 'img/'
+
+  var TOTAL_COLORS = 7;
+  var all_center_types_colors = [
+    'blue',       // 0
+    'yellow',     // 1
+    'light-blue', // 2
+    'cyan',       // 3
+    'green',      // 4
+    'red',        // 5
+    'grey'        // 6
+  ];
+
+  var center_types_to_add = [
+  ];
+
   // center types
   var center_types = [{
       name: 'Sprogcenter',
-      marker_url: 'img/marker-pink.png',
-      active_marker_url: 'img/marker-pink-active.png'
+      color: 0
     }, {
       name: 'Undervisningscenter',
-      marker_url: 'img/marker-cyan.png',
-      active_marker_url: 'img/marker-cyan-active.png'
+      color: 1
     }, {
       name: 'Kontor',
-      marker_url: 'img/marker-green.png',
-      active_marker_url: 'img/marker-green-active.png'
+      color: 2
     }];
 
   // active center type by default
@@ -57,9 +70,13 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   $scope.filter_selected_center_type        = center_types[ACTIVE_CENTER_TYPE_INDEX];
   $scope.is_filter_enabled = false;
   $scope.filtered_markers_number = 0;
+  $scope.is_allowed_changes = true;
 
   $scope.total_markers_number = 0;
+  $scope.center_type_color_to_add = 0;
+  $scope.center_types_to_add = center_types_to_add;
 
+  $scope.all_center_types_colors = all_center_types_colors;
 
   $scope.lat     = '';
   $scope.lng     = '';
@@ -75,7 +92,45 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       $scope.address = '';
       $scope.lat     = '';
       $scope.lng     = '';
+    },
+    updateContactDetails: function() {
+      $scope.contact_details = active_marker.contact_details;
+    },
+    updateAddress: function () {
+      var address = "";
+
+      if(!active_marker) {
+        return;
+      }
+
+      geocoder.geocode({
+        location: active_marker.getPosition()
+      }, function (result, status) {
+        if (status == gmaps.GeocoderStatus.OK) {
+          address = result[0].formatted_address;
+          $scope.address = address;
+          $scope.$apply();
+        }
+      });
     }
+  };
+
+  $scope.removeCurrentCenterType = function() {
+    var $select = $('.gmap-module__active-center-type');
+
+    $scope.center_types.splice($scope.active_center_type_index, 1);
+    $scope.active_center_type_index = 0;
+
+    reinitSelect($select);
+
+    return false;
+  };
+
+  var reinitSelect = function($select) {
+    $select.select2("destroy");
+    setTimeout(function(){
+      initCustomSelect($select);
+    }, 0);
   };
 
   /**
@@ -107,7 +162,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     gmaps.event.addListener(marker, "dragend", function(e) {
       setMarkerActive(marker);
       updateInfoPanel(coords);
-      getAddress();
+      info_panel.updateAddress();
     });
 
     gmaps.event.addListener(marker, "click", function(e) {
@@ -130,7 +185,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       lng: coords.lng
     });
 
-    getAddress();
+    info_panel.updateAddress();
     setTotalMarkersNumber();
   };
 
@@ -144,17 +199,13 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     active_marker = marker;
     active_marker.setIcon(active_marker.center_type.active_marker_url);
 
-    getAddress();
+    info_panel.updateAddress();
     info_panel.updateWithCoords({
       lat: active_marker.position.k,
       lng: active_marker.position.D
     });
-    updateContactDetails();
+    info_panel.updateContactDetails();
     updateCenterType();
-  };
-
-  var updateContactDetails = function() {
-    $scope.contact_details = active_marker.contact_details;
   };
 
   /**
@@ -188,31 +239,23 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   /**
-  * Get address for active marker
+  * Set total markers number
   */
-  var getAddress = function () {
-    var address = "";
+  var setTotalMarkersNumber = function() {
+    $scope.total_markers_number = markers.length;
+  };
 
-    if(!active_marker) {
-      return;
+  var applyContactDetails = function() {
+    if(active_marker) {
+      active_marker.contact_details = $scope.contact_details;
     }
-
-    geocoder.geocode({
-      location: active_marker.getPosition()
-    }, function (result, status) {
-      if (status == gmaps.GeocoderStatus.OK) {
-        address = result[0].formatted_address;
-        $scope.address = address;
-        $scope.$apply();
-      }
-    });
   };
 
   /**
   * init map
   */
   var init = function() {
-    var input;
+    var address_input;
 
     gmaps    = google.maps;
     map      = new gmaps.Map(document.getElementById('map'), mapOptions);
@@ -224,6 +267,55 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     // attach events
     gmaps.event.addListener(map, "click", addNewMarkerByClick);
     gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
+
+    setCenterTypesToAdd();
+  };
+
+  var setCenterTypesToAdd = function() {
+    var init_center_types = [];
+
+    center_types_to_add = [];
+
+    for(var i in center_types) {
+      init_center_types.push(center_types[i].color);
+    }
+
+    init_center_types = arrNoDupe(init_center_types);
+
+    for(var i = 0; i < TOTAL_COLORS; ++i) {
+      if($.inArray(i, init_center_types) === -1) {
+        center_types_to_add.push(i);
+      }
+    }
+
+    $scope.center_types_to_add = center_types_to_add;
+
+    function arrNoDupe(a) {
+      var temp = {};
+      for (var i = 0; i < a.length; i++) {
+        temp[a[i]] = true;
+      }
+
+      var r = [];
+      for (var k in temp) {
+        r.push(parseInt(k, 10));
+      }
+
+      return r;
+    }
+  };
+
+  $scope.addNewType = function() {
+    if($scope.center_type_name_to_add) {
+      center_types.push({
+        color: $scope.center_types_to_add[$scope.center_type_color_to_add],
+        name: $scope.center_type_name_to_add
+      })
+      $scope.center_type_name_to_add = '';
+      $scope.center_types_to_add.splice($scope.center_type_color_to_add, 1);
+      $scope.center_type_color_to_add = 0;
+      reinitSelect($('.gmap-module__add-new-type-selector'));
+    }
   };
 
   /**
@@ -280,6 +372,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       $scope.filtered_markers_number = 0;
       $scope.is_filter_enabled = false;
     }
+
+    $scope.is_allowed_changes = active_marker.center_type.name !== $scope.filter_selected_center_type.name;
     
   };
 
@@ -289,6 +383,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
     $scope.filtered_markers_number = 0;
     $scope.is_filter_enabled = false;
+    $scope.is_allowed_changes = true;
   };
 
   /**
@@ -305,19 +400,6 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
     setTotalMarkersNumber();
     return false;
-  };
-
-  /**
-  * Set total markers number
-  */
-  var setTotalMarkersNumber = function() {
-    $scope.total_markers_number = markers.length;
-  };
-
-  var applyContactDetails = function() {
-    if(active_marker) {
-      active_marker.contact_details = $scope.contact_details;
-    }
   };
 
   /**
@@ -338,14 +420,11 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     $debounce(applyContactDetails, 500);
   });
 
-  /*
-  * ng-repeat of element has finished its work
-  */
-  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent, element) {
-    var $select = $(element).parent();
+  var initCustomSelect = function($select) {
     $select.select2({
       templateResult: formatOption,
-      minimumResultsForSearch: 100
+      minimumResultsForSearch: 100,
+      templateSelection: formatOption
     });
 
     function formatOption (opt) {
@@ -354,9 +433,26 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       if(!opt.id) {
         return '';
       }
-      option = '<span style="white-space: nowrap"><img src="' + center_types[opt.element.value].marker_url + '" />' + opt.text + '</span>';
+
+      option = '<span style="white-space: nowrap"><img src="../' + IMG_PATH;
+      if($select.hasClass('gmap-module__add-new-type-selector')) {
+        option += all_center_types_colors[center_types_to_add[opt.id]];
+      }
+      else {
+        option += all_center_types_colors[center_types[opt.id].color];
+      }
+      option += '-small.png" />' + opt.text + '</span>';
+
       return option;
     }
+  };
+
+  /*
+  * ng-repeat of element has finished its work
+  */
+  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent, element) {
+    var $select = $(element).parent();
+    initCustomSelect($select);
   });
 
   /**

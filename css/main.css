@@ -281,12 +281,22 @@ textarea {
     }
 }
 
+body {
+    width: 900px;
+}
+
 .gmap-module {
-    width: 800px;
+    width: 100%;
     margin: 20px;
     border: 1px dashed #ccc;
     overflow: hidden;
     padding: 15px;
+}
+
+.gmap-module__center-types {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
 .gmap-module_map {
@@ -301,6 +311,10 @@ textarea {
 }
 .gmap-module__row {
     margin-bottom: 10px;
+}
+
+.gmap-module__row textarea {
+    width: 100%;
 }
 
 .gmap-module select {
