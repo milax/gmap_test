@@ -73,6 +73,20 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   var info_panel = {
+    updateAllFields: function(coords) {
+      var coords = {
+        lat: active_marker.position.k,
+        lng: active_marker.position.D
+      };
+      $scope.lat = coords.lat;
+      $scope.lng = coords.lng;
+      
+      $scope.contact_details = active_marker.contact_details;
+      $scope.opening_hours = active_marker.opening_hours;
+      $scope.phones = active_marker.phones;
+
+      info_panel.updateAddress()
+    },
     updateWithCoords: function(coords) {
       $scope.lat = coords.lat;
       $scope.lng = coords.lng;
@@ -137,6 +151,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     });
 
     gmaps.event.addListener(marker, "dragend", function(e) {
+      setMarkerActive(marker);
       info_panel.updateWithCoords({
         lat: marker.position.k,
         lng: marker.position.D
@@ -164,22 +179,64 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     info_panel.updateAddress();
   };
 
+  var applyData = function(field) {
+    if(active_marker) {
+      var data_to_save = '';
+      switch(field) {
+        case 'phones': 
+          data_to_save = $scope.phones;
+          break;
+
+        case 'opening_hours': 
+          data_to_save = $scope.opening_hours;
+          break;
+
+        case 'contact_details':
+          data_to_save = $scope.contact_details;
+      }
+      active_marker[field] = data_to_save;
+    }
+  };
+
+  $scope.$watch('contact_details', function(newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    $debounce(function(){
+      applyData('contact_details');
+    }, 500);
+  });
+
+  $scope.$watch('phones', function(newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    $debounce(function(){
+      applyData('phones');
+    }, 500);
+  });
+
+  $scope.$watch('opening_hours', function(newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    $debounce(function(){
+      applyData('opening_hours');
+    }, 500);
+  });
+
+
   /**
   * Set the marker active
   */
   var setMarkerActive = function(marker) {
     if(active_marker) {
-      // active_marker.setIcon(active_marker.center_type.marker_url);
+      active_marker.setIcon(getMarkerIconUrlByColorIndex(marker.center_type.color));
     }
     active_marker = marker;
-    active_marker.setIcon(getMarkerIconUrlByColorIndex(marker.center_type.color));
+    active_marker.setIcon();
 
-    info_panel.updateAddress();
-    info_panel.updateWithCoords({
-      lat: active_marker.position.k,
-      lng: active_marker.position.D
-    });
-    info_panel.updateContactDetails();
+    info_panel.updateAllFields();
     // updateCenterType();
   };
 
