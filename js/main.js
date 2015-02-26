@@ -9,7 +9,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     map,
     geocoder,
     markers = [],
-    active_marker;
+    active_marker,
+    marker_id = 0;
 
   var center_types = {
     colors: {
@@ -59,6 +60,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     $scope.cts_colors_to_add = center_types.colors.to_add;
     $scope.active_ct_color_to_add_index = 0;
 
+    $scope.addresses = [];
+
     $scope.$apply();
 
     gmaps    = google.maps;
@@ -73,7 +76,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   var info_panel = {
-    updateAllFields: function(coords) {
+    updateAllFields: function() {
       var coords = {
         lat: active_marker.position.k,
         lng: active_marker.position.D
@@ -85,7 +88,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       $scope.opening_hours = active_marker.opening_hours;
       $scope.phones = active_marker.phones;
 
-      info_panel.updateAddress()
+      info_panel.updateAddress();
     },
     updateWithCoords: function(coords) {
       $scope.lat = coords.lat;
@@ -112,9 +115,27 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       }, function (result, status) {
         if (status == gmaps.GeocoderStatus.OK) {
           address = result[0].formatted_address;
+          updateAddressArray(address, active_marker.marker_id);
           $scope.address = address;
           $scope.$apply();
         }
+        else {
+          $scope.address = 'Fow now it\'s impossible to get an address...';
+        }
+      });
+    }
+  };
+
+  var updateAddressArrayWith = function(address, marker_id) {
+    var is_new = true;
+    for(var i in $scope.addresses) {
+      if($scope.addresses[i].address)
+    }
+    if($.inArray(address, $scope.addresses) === -1) {
+      if($.inArray(marker_id, marker_ids))
+      $scope.addresses.push({
+        address: address,
+        marker_id: marker_id
       });
     }
   };
@@ -168,7 +189,10 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     });
 
     marker.center_type = $scope.cts_added[$scope.active_ct_index];
+    marker.marker_id = marker_id++;
     markers.push(marker);
+
+    updateAddressList();
 
     setMarkerActive(marker);
 
@@ -183,11 +207,11 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     if(active_marker) {
       var data_to_save = '';
       switch(field) {
-        case 'phones': 
+        case 'phones':
           data_to_save = $scope.phones;
           break;
 
-        case 'opening_hours': 
+        case 'opening_hours':
           data_to_save = $scope.opening_hours;
           break;
 
@@ -248,7 +272,6 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       }
     }
     info_panel.clearData();
-    console.log(markers)
   };
 
   $scope.addCenterType = function() {
@@ -256,7 +279,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       $scope.cts_added.push({
         color: $scope.cts_colors_to_add[$scope.active_ct_color_to_add_index],
         name: $scope.ct_name_to_add
-      })
+      });
       $scope.cts_colors_to_add.splice($scope.active_ct_color_to_add_index, 1);
       $scope.active_ct_color_to_add_index = 0;
       reinitCustomSelect($('.gmap__add-new-type-selector'));
@@ -269,7 +292,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
 
       $('#added-new-type-msg').fadeIn(1000, function(){
         $(this).fadeOut();
-      })
+      });
 
     }
   };
@@ -292,7 +315,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     setTimeout(function(){
       initCustomSelect($select);
     }, 0);
-  }
+  };
 
   var initCustomSelect = function($select) {
     $select.select2({
@@ -318,7 +341,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         index = $scope.cts_added[opt.id].color;
       }
 
-      option = '<span style="white-space: nowrap"><img src="../' + IMG_PATH; 
+      option = '<span style="white-space: nowrap"><img src="../' + IMG_PATH;
       option += ct_colors_legend[index];
       option += '-small.png" />' + opt.text + '</span>';
 
