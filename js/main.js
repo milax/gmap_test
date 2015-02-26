@@ -71,12 +71,33 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   $scope.addCenterType = function() {
-    $scope.is_add_center_type_panale_open = true;
+    if($scope.ct_name_to_add) {
+      $scope.cts_added.push({
+        color: $scope.cts_colors_to_add[$scope.active_ct_color_to_add_index],
+        name: $scope.ct_name_to_add
+      })
+      $scope.cts_colors_to_add.splice($scope.active_ct_color_to_add_index, 1);
+      $scope.active_ct_color_to_add_index = 0;
+      reinitCustomSelect($('.gmap__add-new-type-selector'));
+      
+      $scope.ct_name_to_add = '';
+
+      if(!$scope.cts_colors_to_add.length) {
+        $scope.is_add_center_type_panel_open = false;
+      }
+
+      $('#added-new-type-msg').fadeIn(1000, function(){
+        $(this).fadeOut();
+      })
+
+    }
   };
 
   $scope.removeActiveCenterType = function() {
+    $scope.cts_colors_to_add.push($scope.cts_added[$scope.active_ct_index].color);
     $scope.cts_added.splice($scope.active_ct_index, 1);
     $scope.active_ct_index = 0;
+
     reinitCustomSelect($('#active-center-type'));
 
     return false;

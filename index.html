@@ -26,24 +26,26 @@
                             <select ng-model="active_ct_index" class="gmap__active-ct" id="active-center-type">
                                 <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
                             </select>
+                            <span id="added-new-type-msg" style="display: none; color: green">Added new type!</span>
                         </div>
                         <ul>
                             <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove</a></li>
-                            <li><a href="#" ng-click="is_add_center_type_panel_open = true">Add new</a></li>
+                            <li ng-show="cts_colors_to_add.length"><a href="#" ng-click="is_add_center_type_panel_open = true">Add new</a></li>
                         </ul>
 
                         <!-- add new center type -->
-                        <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open">
+                        <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open && cts_colors_to_add.length">
                             <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
                                 <select ng-model="active_ct_color_to_add_index" class="gmap__add-new-type-selector" style="width: 75px;">
                                     <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="$index == 0"></option>
                                 </select>
                             </div>
+
                             <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
                                 <input ng-model="ct_name_to_add" />
                                 <p ng-show="!ct_name_to_add" style="margin: 0; color: #c00; font-size: 11px;">Please enter name!</p>
                             </div>
-                            <button class="gmap__add-new-type-btn" ng-click="addNewType()">Add</button>
+                            <button class="gmap__add-new-type-btn" ng-click="addCenterType()">Add</button>
                             <a href="#" ng-click="is_add_center_type_panel_open = false">Close</a>
                         </div>
                         
