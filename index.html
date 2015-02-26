@@ -22,19 +22,22 @@
                     <div class="gmap__row gmap__ct">
 
                         <!-- added center types -->
+                        <h2>Center types</h2>
                         <div ng-show="cts_added.length">
+                            <span>Active:</span>
                             <select ng-model="active_ct_index" class="gmap__active-ct" id="active-center-type">
                                 <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
                             </select>
-                            <span id="added-new-type-msg" style="display: none; color: green">Added new type!</span>
+                            <span id="added-new-type-msg" style="display: none; color: green; font-size: 11px;">Added new type!</span>
                         </div>
                         <ul>
-                            <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove</a></li>
+                            <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove this type</a></li>
                             <li ng-show="cts_colors_to_add.length"><a href="#" ng-click="is_add_center_type_panel_open = true">Add new</a></li>
                         </ul>
 
                         <!-- add new center type -->
                         <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open && cts_colors_to_add.length">
+                            <h2>Adding new center type</h2>
                             <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
                                 <select ng-model="active_ct_color_to_add_index" class="gmap__add-new-type-selector" style="width: 75px;">
                                     <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="$index == 0"></option>
@@ -52,6 +55,52 @@
 
                     </div>
                     <!-- CENTER TYPES -->
+
+                    <h2>Info of the current center</h2>
+                    <!-- COORDS -->
+                    <div class="gmap__row clearfix">
+                        <div class="gmap__lat">
+                            <label>Lat</label>
+                            <input type="text" ng-model="lat" readonly>
+                        </div>
+                        <div class="gmap__lng">
+                            <label>Lng</label>
+                            <input type="text" ng-model="lng" readonly>
+                        </div>
+                    </div>
+                    <!-- /COORDS -->
+
+                    <!-- ADDRESS -->
+                    <div class="gmap__address">
+                        <h3 class="gmap__title">Address:</h3>
+                        <p ng-show="address">{{address}}</p>
+                        <div class="alert-box" ng-hide="address">
+                            Please add a new center or pick an existing on the map
+                        </div>
+                    </div>
+                    <!-- /ADDRESS -->
+
+
+                    <!-- CONTACT PERSONS -->
+                    <div class="gmap__row" ng-show="address">
+                        <label>Contact persons</label>
+                        <textarea ng-model="contact_details" class="gmap__contact-details"></textarea>
+                    </div>
+                    <!-- /CONTACT PERSONS -->
+
+                    <!-- PNONES -->
+                    <div class="gmap__row" ng-show="address">
+                        <label>Phones</label>
+                        <textarea ng-model="phones" class="gmap__phones"></textarea>
+                    </div>
+                    <!-- /PNONES -->
+
+                    <!-- OPENING HOURS -->
+                    <div class="gmap__row" ng-show="address">
+                        <label>Opening hours</label>
+                        <textarea ng-model="opening_hours" class="gmap__opening-hours"></textarea>
+                    </div>
+                    <!-- /OPENING HOURS -->
 
             </div>
         </div>

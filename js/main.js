@@ -7,7 +7,9 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   var
     gmap,
     map,
-    geocoder;
+    geocoder,
+    markers = [],
+    active_marker;
 
   var center_types = {
     colors: {
@@ -55,19 +57,141 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     $scope.active_ct_index = 0;
 
     $scope.cts_colors_to_add = center_types.colors.to_add;
-    console.log($scope.cts_colors_to_add)
     $scope.active_ct_color_to_add_index = 0;
 
     $scope.$apply();
 
     gmaps    = google.maps;
     map      = new gmaps.Map(document.getElementById('map'), mapOpts);
+    geocoder = new gmaps.Geocoder();
 
     // attach events
-    // gmaps.event.addListener(map, "click", addNewMarkerByClick);
+    gmaps.event.addListener(map, "click", addNewMarkerByClick);
     // gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
 
     // setCenterTypesToAdd();
+  };
+
+  var info_panel = {
+    updateWithCoords: function(coords) {
+      $scope.lat = coords.lat;
+      $scope.lng = coords.lng;
+      // $scope.$apply();
+    },
+    clearData: function() {
+      $scope.address = '';
+      $scope.lat     = '';
+      $scope.lng     = '';
+    },
+    updateContactDetails: function() {
+      $scope.contact_details = active_marker.contact_details;
+    },
+    updateAddress: function () {
+      var address = "";
+
+      if(!active_marker) {
+        return;
+      }
+
+      geocoder.geocode({
+        location: active_marker.getPosition()
+      }, function (result, status) {
+        if (status == gmaps.GeocoderStatus.OK) {
+          address = result[0].formatted_address;
+          $scope.address = address;
+          $scope.$apply();
+        }
+      });
+    }
+  };
+
+  /**
+  * Add new marker by click on the map
+  */
+  var addNewMarkerByClick = function(e) {
+    addNewMarker({
+      lat: e.latLng.k,
+      lng: e.latLng.D
+    });
+  };
+
+  var getMarkerIconUrlByColorIndex = function(index) {
+    var ct_colors_legend = center_types.colors.legend;
+    return IMG_PATH + ct_colors_legend[index] + '.png';
+  };
+
+  /**
+  * Add new marker with coords
+  */
+  var addNewMarker = function(coords) {
+    if($scope.is_filter_enabled && ($scope.active_center_type.name !== $scope.filter_selected_center_type.name)) {
+      alert('Please reset filter to add new center to the map!');
+      return;
+    }
+
+    var marker = new gmaps.Marker({
+        map: map,
+        position: coords,
+        icon: getMarkerIconUrlByColorIndex($scope.cts_added[$scope.active_ct_index].color),
+        draggable: true
+    });
+
+    gmaps.event.addListener(marker, "dragend", function(e) {
+      info_panel.updateWithCoords({
+        lat: marker.position.k,
+        lng: marker.position.D
+      });
+      info_panel.updateAddress();
+    });
+
+    gmaps.event.addListener(marker, "click", function(e) {
+      setMarkerActive(marker);
+    });
+
+    gmaps.event.addListener(marker, "dblclick", function (e) {
+       return false;
+    });
+
+    marker.center_type = $scope.cts_added[$scope.active_ct_index];
+    markers.push(marker);
+
+    setMarkerActive(marker);
+
+    info_panel.updateWithCoords({
+      lat: coords.lat,
+      lng: coords.lng
+    });
+    info_panel.updateAddress();
+  };
+
+  /**
+  * Set the marker active
+  */
+  var setMarkerActive = function(marker) {
+    if(active_marker) {
+      // active_marker.setIcon(active_marker.center_type.marker_url);
+    }
+    active_marker = marker;
+    active_marker.setIcon(getMarkerIconUrlByColorIndex(marker.center_type.color));
+
+    info_panel.updateAddress();
+    info_panel.updateWithCoords({
+      lat: active_marker.position.k,
+      lng: active_marker.position.D
+    });
+    info_panel.updateContactDetails();
+    // updateCenterType();
+  };
+
+  var removeAllMarkersWithThisType = function(color_index) {
+    for(var i = markers.length - 1; i >= 0; i--) {
+      if(markers[i].center_type.color === color_index) {
+        markers[i].setMap(null);
+        markers.splice(i, 1);
+      }
+    }
+    info_panel.clearData();
+    console.log(markers)
   };
 
   $scope.addCenterType = function() {
@@ -94,11 +218,14 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   $scope.removeActiveCenterType = function() {
+    removeAllMarkersWithThisType($scope.cts_added[$scope.active_ct_index].color);
+
     $scope.cts_colors_to_add.push($scope.cts_added[$scope.active_ct_index].color);
     $scope.cts_added.splice($scope.active_ct_index, 1);
     $scope.active_ct_index = 0;
 
     reinitCustomSelect($('#active-center-type'));
+
 
     return false;
   };
