@@ -285,7 +285,7 @@ body {
     width: 900px;
 }
 
-.gmap-module {
+.gmap {
     width: 100%;
     margin: 20px;
     border: 1px dashed #ccc;
@@ -293,54 +293,54 @@ body {
     padding: 15px;
 }
 
-.gmap-module__center-types {
+.gmap__center-types {
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 20px;
 }
 
-.gmap-module_map {
+.gmap_map {
     width: 500px;
     height: 500px;
     float: right;
     margin-left: 20px;
 }
 
-.gmap-module__info-panel {
+.gmap__info-panel {
     overflow: hidden;
 }
-.gmap-module__row {
+.gmap__row {
     margin-bottom: 10px;
 }
 
-.gmap-module__row textarea {
+.gmap__row textarea {
     width: 100%;
 }
 
-.gmap-module select {
+.gmap select {
     width: 210px;
     display: block;
 }
 
-.gmap-module input[type="text"] {
+.gmap input[type="text"] {
     width: 100%;
     box-sizing: border-box;
 }
 
-.gmap-module__contact-details {
+.gmap__contact-details {
     width: 100%;
     box-sizing: border-box;
     height: 100px;
 }
 
-.gmap-module__search-box {
+.gmap__search-box {
     padding: 10px;
     margin-bottom: 10px;
     background-color: #efefef;
     border: 1px solid #ccc;
 }
 
-.gmap-module .alert-box {
+.gmap .alert-box {
     border: 1px dotted #c00;
     color: #c00;
     padding: 10px;
@@ -348,70 +348,78 @@ body {
     margin-bottom: 10px;
 }
 
-.gmap-module__address {
+.gmap__address {
     padding: 10px;
     background-color: #efefef;
     border: 1px solid #ccc;
     margin-bottom: 10px;
 }
 
-.gmap-module__title {
+.gmap__title {
     margin: 0 0 10px;
     padding: 0;
 }
 
-.gmap-module__opts {
+.gmap__opts {
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 10px;
 }
 
-.gmap-module .filter-box {
+.gmap .filter-box {
     display: none;
     border: 1px dashed #069;
     padding: 15px;
     margin-bottom: 25px;
 }
 
-.gmap-module_icon {
+.gmap_icon {
     background-repeat: no-repeat;
     padding-left: 30px;
     background-position: 0 50%;
 }
-.gmap-module .icn-default-zoom {
+.gmap .icn-default-zoom {
     background-image: url(data:image/gif;base64,R0lGODlhGAAYAOZ/ABuk/iqq/+z5/yWl/pPh/y27/ySX8hus/yGy/x2Y8YPG/7Ld/qHa/zS0/zGu/zWm/iGZ8+b0/x3E/3jW/yTD/7Pp/8Xl/zmi+j6l/2rC//z+/y3U/+v2/y22/8bt/y3C/zSp/zmd8kO2/6vk/y6y/0Sp+Mrs/y2m/ziq/zKq/53T/xiy/zy1/9fy/yKa9B6w/77l//f8/zqa7n7N/3bM/y6a9Din/8nl/C2e9vX7/1i1/x21/zGh/y6j/zyp/zHO/z6x/xi1/4ve/yi0/z6t/y/J/y6a8/H6/zqk/C2e/zGT5yyh+y+X8D+6/zau/1q7/yqY75fR/5ba/47T/57f/1DQ/3DA/x2g+la9/zeg9yC6/zKm/zeh+rPj/zuk/4bU/4Xf/zmg9i2U7CaJ3rjf/CCp/x+f9x64/ymk/Sig92HO/yaY9SWU7zDG/zrL/xyb9CSa8iuZ9Em0/zOe91iy+Fmz/Dml/U+p7zml/k7D/yCT6SCX7qXn/3nD/X7F+f///yH5BAEAAH8ALAAAAAAYABgAAAf/gH+Cg38CI0ITBBUxhI2OLWpBKys7K0FaE0eOjlQ7LwUfRT9tHx8rBSabg1IHQx0/GxKyG20FCC+pmx6tHRQSVQR8YG4SHx0vJAKOGiJlJAhtFYQaQhSuADSOJgAkJGcemwTIHQOMhDNXDmYTqhp5AyRXMI1PAw4JLap/VAkOb1ON5KC5p0mVhX4uZjTCkiYFhAj6yCRIsedLIxpwQEBYoM+PC40jGnUZ8GBJCXONOOAAAUIPREJHGmx5YKCPoxx0DKDAcWcTgwAobBioYyHHHw5kShiwwRTKjWUZAgC5EMfAmjlr2NSwk+UCnjhGnjbKkeEECyA+kHBB4kNEEyIhScIgMcJEbCMGKE44YcE3xQkiJ2yECHFBjJKXjY4ssKKjsQIYGlT08CKj8pgo+lRJ9oEBQxIVmTXzeMADD4fQBhUoQIy6tWtVgQAAOw==);
 }
 
-.gmap-module .icn-go-to-marker {
+.gmap .icn-go-to-marker {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACHUlEQVR4XuWTPWgUQRTH/7trdC+eeJHLKZhGsAo2goIggo2EVMZC5UQLm6C1hYgQLaIoFiEJEQQxjaAofoCcYKGJF9JZSFCw0EbJJ6fxzGTvdnK7z7f38CQnexuPbcSBH8zCe//fPmYG//wyIgR27hhK222pNOo6Zlyg+x4SAMphgnURglQHt3eeGQX8ShXyVnjPVDSM+xeqNcxcswLbMAF4GkSeSOg3piU1jQJMRKxAQL6Wvybh194QgdDkBJAJXLABkClqItOMQ2DVCRiZoBLjBP5qQe0MIrsBc82CP4lngsT6QFAGQDIBPJBbBJW/wt7w9w/Nfn4KpY4k0GJJ+OYE0Lr3NLA8C3LmAGe+Gg5fQ/uAcgE3eBa8n1fAgRF5eGGC9MjhjUM9+3dm23bshqUXQUufQeoLtxQAE4KxutNjUbEEjH3KPDl5d6EXQCFMkGJ2Xe9q7TuxL3ko1eLA8pWcg4WawBABI+E/OPzp2y35s4++XQTwjvkedsiK+Xj+hXP1wRvn5aJS8KRKsCAHK8BjwZIGnk2lJzj8UtDLqEa3qCLj4cO5nOp//H7Tq6IOgkRgiKgWrjSQm8pM9j4s9AU9TEEy1na7tjEHh3tSY9OXQeoGqDzADIEcZoG/R7NbJ4MaqQ29kdGSm0faxmf7QcsDzGBEeLOSW0fT+ekroJlrkeHNS24fb399J5vJh4THItkj1IXHKEkKvP9v1k8pYACc3zCsugAAAABJRU5ErkJggg==);
 }
 
-.gmap-module .icn-remove-all {
+.gmap .icn-remove-all {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAA3RJREFUSImllE1PG0cch38LRgJLu16b2BA2ODZZv2BvmhiFKCJvUkVfDhyipN8gPZh+jHwHalni1lOrXlNVROoholJTxaTFbxg7BTdgBzZ41uuCQbZ3ekjWNbu2oe1PWq0085/nmdmdGcCQGBB6dnM6GwMEY1+vLAGTKzdDG18Dgb6FMSC0/sWndfVJlCYWbivnkcQBd2Lhnqo+idL1R58cGSWDnfC5Bx8nPEHPMJoaHGPO4RHr8OPI6zffPAVqveA3Pr+TEq8HWDQ18Bf4IZvd9vhqbvv7p8ABADBt+MLdhMc/NWyEbP62obz86YW0COya4PO3UuJHAdY4prixVV/94XnkKyDHxIDQ3GdzCY/oNcH15H7PKYnVl23JMnA5cn82KUp+E7wtyW/XV1d+jjDPRG929v5ssFdheyXpgpL4ZU0aAizXb88kxaDYE67nxfNfM5ZCYWues7PpQEC09Sv2ix4ezUZqYGBwUPR6WJw0+08oWyBb+e15/R8IM9fCab9vqq/EFArQVhPQKEA1gAJggHxxh7xaz4SjQJnRa2OAMBOeTvm9Hr4nUGuBNhpAo/H+rWmmklypTNaLO+EoUAY+7KJOSSQQSPndk/9IKAU9OQE9PgaaZ3yWvT2SKZWlL4GS3sYYi2KAEBF9Kd/YRZ7W66D1OkBpXzAAbFZkkt3fPwXvKtAl1xyupI/j7WeSAeSrhGSIbIIDgKXbgCHAQlt0UGuav3G30BZFo8dkTY1xwB22OZNXWBt3LvqHvFYVklTfXTWe+FOCOOCe5p3JKZb/V/C2pEZIRjktaQvigDvIO5Pe/wjX80eNkGyHhAHe3+cS70y5uf8H11OsKUqWyNIisMssAZMh3nUueFElFQC4zNkdZ0uIkiOyZJmwciuCjedaZwx4o5JKXpElANAYpN2cve8WvsTZ+erJ8Y8D5SP1we5f6pEGBr2eP1VSyRNZigLlKFAuEDlcVBXSb0ypph6+Pao9ZAAgDgR9o+OJMdZmNc5kp1ohW0Ru3y16loEJt8OVErqsZK9WPcwdvI0sAvnOXRS8Mjq+NsbyI3rbbrVCdoj5+HdKLjlcaYFztO+u/Vr1cPOgHFkE8oD5HAS9F8bXXCw/UqpWSKnSG94pEUZd6Yucg5fV6mGhA941S8D0t1YuvQxM9AN3JgYI31m5ZAzwGfv+BjWkhWEC8xPaAAAAAElFTkSuQmCC);
 }
 
-.gmap-module .icn-remove-active {
+.gmap .icn-remove-active {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABc0lEQVR4XqWTMUsDQRCFJyjYSFKkSS9XCGKTCEFQNglip1VSpFG0sLGxSSeeaCEp7K2sbOJPkER7EwvBKmid5porBCMyzpvlhjNoYwJf3sybmb3NhMswM03zmVU52ICEwolQER7+6HfCvXCq/Vd3RLjB134lFJg7FywKHPw08CZ6Qvha/NhZ0wLfnKlKDuwQxL/12AHvzbITmK+PgTYgV98DL6lbDbO6xLhetN+XrdVIP/k8xZ2OhtlGgyiKNI67XUr2lL0d+BtEW0uJOoH58hDgqcByqQGXntGv0WYATWInMJ/v/UA8gOH0jP8bP8djiGJxLkc0Gvm4UDB/sk9PeVstJOoEf+2j7TTqSQ24ZMaWOFzJ2xKDVouo10NOw35fNSiVVKlapWG7bUsMHiN/g5fleSf4J++uK8jV95gvPVazJT4vzvnhZlmRHNjCEAtWRy9yO+ApmAkF5nqRRYGTmNLAm+gJbQeDhcy/XqbiK9PUr/M3T3GnVEK0IY4AAAAASUVORK5CYII=);
 }
 
-.gmap-module__lat {
+.gmap__lat {
     float: left;
     width: 49%;
 }
 
-.gmap-module__lng {
+.gmap__lng {
     float: right;
     width: 49%;
 }
 
 
-.gmap-module__tools {
+.gmap__tools {
     padding: 10px;
     background-color: #efefef;
     border: 1px solid #ccc;
 }
 
-.gmap-module__tools a {
+.gmap__tools a {
     display: inline-block;
     line-height: 25px;
+}
+
+
+.select2-selection__rendered img {
+    margin-right: 5px;
+}
+.select2-results__option img {
+    margin-right: 5px;
 }

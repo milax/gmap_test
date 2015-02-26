@@ -13,131 +13,44 @@
     <body ng-app="as3App">
 
 
-        <div class="gmap-module" ng-controller="gmapController">
+        <div class="gmap" ng-controller="gmapController">
+            <div id="map" class="gmap_map"></div>
 
-            <div class="gmap-module__filter-box">
-                <h3 class="gmap-module__title">Added centers: {{total_markers_number}} <span class="gmap-module__title" ng-show="is_filter_enabled">| Shown (filtered) centers: {{filtered_markers_number}}</span></h3>
-                
-                <p>
-                    Filter by type of center: 
-                    <select ng-model="filter_selected_center_type_index" ng-change="filterTypeSelected()">
-                        <option on-finish-render="ngRepeatFinished" ng-repeat="item in center_types" value="{{$index}}" ng-selected="$index == 0">{{item.name}}</option>
-                    </select>
-                    <img ng-src="{{filter_selected_center_type.marker_url}}" ng-show="is_filter_enabled">
-                    <button ng-click="setFilter()">Filter!</button>
-                    <button ng-click="resetFilter()" ng-show="is_filter_enabled">&#10005; Reset filter</button>
-                </p>
-                <p></p>
-            </div>
+            <div class="gmap__info-panel">
 
+                    <!-- CENTER TYPES -->
+                    <div class="gmap__row gmap__ct">
 
-            <div class="gmap-module__search-box">
-                <h3 class="gmap-module__title">Search address:</h3>
-                <p>
-                    <input type="text" ng-model="search_address" id="search-address" class="gmap-module__search-address">
-                </p>
-                <p>
-                    Please press Enter key to search
-                </p>
-            </div>
-
-            <div id="map" class="gmap-module_map"></div>
-
-            <div class="gmap-module__info-panel">
-
-
-                <div class="gmap-module__opts" ng-class="{disabled: !is_allowed_changes}">
-                    <div class="gmap-module__row gmap-module__center-types">
-                        <p>
-                            <label>Type of center:</label>
-                            <img ng-src="{{active_center_type.marker_url}}">
-                        </p>
-
-                        <div ng-show="center_types.length">
-                            <select ng-model="active_center_type_index" ng-change="centerTypeSelected()" class="gmap-module__active-center-type">
-                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in center_types" value="{{$index}}" ng-selected="active_center_type_index == $index">{{center.name}}</option>
+                        <!-- added center types -->
+                        <div ng-show="cts_added.length">
+                            <select ng-model="active_ct_index" class="gmap__active-ct" id="active-center-type">
+                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
                             </select>
                         </div>
+                        <ul>
+                            <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove</a></li>
+                            <li><a href="#" ng-click="is_add_center_type_panel_open = true">Add new</a></li>
+                        </ul>
 
-                        <br />
-
-                        <a href="#" ng-click="removeCurrentCenterType()" ng-show="center_types.length">Remove current</a><br />
-
-                        <a href="#">Add new</a>
-                        <br />
-                        <br />
-                        <div style="padding: 10px; border: 1px dotted #ccc;">
-                            <div style="display: inline-block; vertical-align: top;  margin-bottom: 10px;">
-                                <select ng-model="center_type_color_to_add" class="gmap-module__add-new-type-selector" style="width: 75px;">
-                                    <option on-finish-render="ngRepeatFinished" ng-repeat="color in center_types_to_add" value="{{$index}}" ng-selected="$index == 0"></option>
+                        <!-- add new center type -->
+                        <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open">
+                            <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
+                                <select ng-model="active_ct_color_to_add_index" class="gmap__add-new-type-selector" style="width: 75px;">
+                                    <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="$index == 0"></option>
                                 </select>
                             </div>
-                            <div style="display: inline-block; vertical-align: top;  margin-bottom: 10px;">
-                                <input ng-model="center_type_name_to_add" />
-                                <p ng-show="!center_type_name_to_add" style="margin: 0; color: #c00; font-size: 11px;">Please enter name!</p>
+                            <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
+                                <input ng-model="ct_name_to_add" />
+                                <p ng-show="!ct_name_to_add" style="margin: 0; color: #c00; font-size: 11px;">Please enter name!</p>
                             </div>
-                            <button class="gmap-module__add-new-type-btn" ng-click="addNewType()">Add</button>
+                            <button class="gmap__add-new-type-btn" ng-click="addNewType()">Add</button>
+                            <a href="#" ng-click="is_add_center_type_panel_open = false">Close</a>
                         </div>
+                        
+
                     </div>
+                    <!-- CENTER TYPES -->
 
-                    <div class="gmap-module__row clearfix">
-                        <div class="gmap-module__lat">
-                            <label>Lat</label>
-                            <input type="text" ng-model="lat" readonly>
-                        </div>
-                        <div class="gmap-module__lng">
-                            <label>Lng</label>
-                            <input type="text" ng-model="lng" readonly>
-                        </div>
-                    </div>
-
-                    <div class="gmap-module__address">
-                        <h3 class="gmap-module__title">Address:</h3>
-                        <p ng-show="address">{{address}}</p>
-                        <div class="alert-box" ng-hide="address">
-                            Please add a new center or pick an existing on the map
-                        </div>
-                    </div>
-
-
-                    <div class="gmap-module__row" ng-show="address">
-                        <label>Contact persons</label>
-                        <textarea ng-model="contact_details" class="gmap-module__contact-details"></textarea>
-                    </div>
-
-                    <div class="gmap-module__row" ng-show="address">
-                        <label>Phones</label>
-                        <textarea ng-model="phones" class="gmap-module__phones"></textarea>
-                    </div>
-
-                    <div class="gmap-module__row" ng-show="address">
-                        <label>Opening hours</label>
-                        <textarea ng-model="opening_hours" class="gmap-module__opening-hours"></textarea>
-                    </div>
-
-                </div>
-
-
-                <!-- Tools -->
-                <div class="gmap-module__tools">
-                    <h3 class="gmap-module__title">Options:</h3>
-                    <div class="gmap-module__row">
-                        <p><a href="" class="gmap-module_icon icn-default-zoom" ng-click="setDefaultZoom()">Set default zoom</a></p>
-                    </div>
-
-                    <div class="gmap-module__row" ng-show="address">
-                        <p><a href="" class="gmap-module_icon icn-go-to-marker" ng-click="showActiveMarkerInMapCenter()">Go to the active center</a></p>
-                    </div>
-
-
-                    <div class="gmap-module__row" ng-show="address">
-                        <p><a href="" class="gmap-module_icon icn-remove-active" ng-click="removeActiveMarker()">Remove the active center</a></p>
-                    </div>
-
-                    <div class="gmap-module__row" ng-show="total_markers_number">
-                        <p><a href="" class="gmap-module_icon icn-remove-all" ng-click="removeAllMarkers()">Remove ALL centers</a></p>
-                    </div>
-                </div>
             </div>
         </div>
 
