@@ -421,3 +421,8 @@ body {
 .select2-results__option img {
     margin-right: 5px;
 }
+
+.gmap__title {
+    margin: 0 0 15px;
+    font-size: 20px;
+}

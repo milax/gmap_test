@@ -19,7 +19,7 @@
             <div class="gmap__info-panel">
 
                     <div class="gmap__row" ng-show="getCentersNumber()" style="background: #fff1f1; padding: 5px; border: 1px solid #ffd3d3;">
-                        <h2>Quick go to the address</h2>
+                        <h2 class="gmap__title">Quick go to the address</h2>
                         <select id="address-to-go" style="width: 100%;">
                             <option ng-repeat="address in addresses | filter:'!!'" value="{{addresses.indexOf(address)}}">{{address.text}}</option>
                         </select>
@@ -30,7 +30,7 @@
                     <div class="gmap__row gmap__ct" style="background: #f1fffd; padding: 5px; border: 1px solid #c4fcf4;">
 
                         <!-- added center types -->
-                        <h2>Center types</h2>
+                        <h2 class="gmap__title">Center types</h2>
                         <div ng-show="cts_added.length">
                             <span>Active:</span>
                             <select class="gmap__active-ct" id="active-center-type">
@@ -40,7 +40,7 @@
                         </div>
                         <ul>
                             <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove this type</a></li>
-                            <li ng-show="cts_colors_to_add.length"><a href="#" ng-click="is_add_center_type_panel_open = true">Add new</a></li>
+                            <li ng-show="cts_colors_to_add.length"><a href="" ng-click="is_add_center_type_panel_open = true;">Add new</a></li>
                         </ul>
 
                         <!-- add new center type -->
@@ -57,7 +57,7 @@
                                 <p ng-show="!ct_name_to_add" style="margin: 0; color: #c00; font-size: 11px;">Please enter name!</p>
                             </div>
                             <button class="gmap__add-new-type-btn" ng-click="addCenterType()">Add</button>
-                            <a href="#" ng-click="is_add_center_type_panel_open = false">Close</a>
+                            <a href="" ng-click="is_add_center_type_panel_open = false; $event.stopPropagation();">Close</a>
                         </div>
                         
 
@@ -66,13 +66,13 @@
 
 
                     <div style="background: #fffff1;  padding: 5px; border: 1px solid #fafaba;">
-                        <h2>Info of the current center</h2>
+                        <h2 class="gmap__title">Info of the current center</h2>
                         <ul>
                             <li ng-show="getCentersNumber()">
-                                <a href="#" ng-click="removeAllCenters()">Remove ALL centers</a>
+                                <a href="" ng-click="removeAllCenters()">Remove ALL centers</a>
                             </li>
                             <li ng-show="address">
-                                <a href="#" ng-click="removeThisCenter()">Remove this center from the map</a>
+                                <a href="" ng-click="removeThisCenter()">Remove this center from the map</a>
                             </li>
                         </ul>
 
@@ -91,7 +91,7 @@
 
                         <!-- ADDRESS -->
                         <div class="gmap__address">
-                            <h3 class="gmap__title">Address:</h3>
+                            <p><strong>Address:</strong></p>
                             <p ng-show="address">{{address}}</p>
                             <div class="alert-box" ng-hide="address">
                                 Please add a new center or pick an existing on the map
