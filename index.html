@@ -18,17 +18,16 @@
 
             <div class="gmap__info-panel">
 
-                    <div class="gmap__row" ng-show="getCentersNumber()" style="background: #fff1f1; padding: 5px; border: 1px solid #ffd3d3;">
+                    <div class="gmap__row gmap__quick-go-box" ng-show="getCentersNumber()">
                         <h2 class="gmap__title">Quick go to the address</h2>
-                        <select id="address-to-go" style="width: 100%;">
+                        <select id="address-to-go">
                             <option ng-repeat="address in addresses | filter:'!!'" value="{{addresses.indexOf(address)}}">{{address.text}}</option>
                         </select>
                         <button ng-click="goToAddress()">Go!</button>
                     </div>
 
                     <!-- CENTER TYPES -->
-                    <div class="gmap__row gmap__ct" style="background: #f1fffd; padding: 5px; border: 1px solid #c4fcf4;">
-
+                    <div class="gmap__row gmap__ct">
                         <!-- added center types -->
                         <h2 class="gmap__title">Center types</h2>
                         <div ng-show="cts_added.length">
@@ -36,25 +35,29 @@
                             <select class="gmap__active-ct" id="active-center-type">
                                 <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}" ng-selected="!$index">{{center.name}}</option>
                             </select>
-                            <span id="added-new-type-msg" style="display: none; color: green; font-size: 11px;">Added new type!</span>
+                            <span id="added-new-type-msg">Added new type!</span>
                         </div>
                         <ul>
-                            <li ng-show="cts_added.length"><a href="#" ng-click="removeActiveCenterType()">Remove this type</a></li>
-                            <li ng-show="cts_colors_to_add.length"><a href="" ng-click="is_add_center_type_panel_open = true;">Add new</a></li>
+                            <li ng-show="cts_added.length">
+                                <a href="" ng-click="removeActiveCenterType()">Remove this type</a>
+                            </li>
+                            <li ng-show="cts_colors_to_add.length">
+                                <a href="" ng-click="is_add_center_type_panel_open = true;">Add new</a>
+                            </li>
                         </ul>
 
                         <!-- add new center type -->
-                        <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open && cts_colors_to_add.length">
-                            <h2>Adding new center type</h2>
-                            <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
-                                <select class="gmap__add-new-type-selector" style="width: 75px;">
+                        <div class="gmap__adding-new-type" ng-show="is_add_center_type_panel_open && cts_colors_to_add.length">
+                            <h2 class="gmap__title">Adding new center type</h2>
+                            <div class="gmap__add-new-type-selector-holder">
+                                <select class="gmap__add-new-type-selector">
                                     <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="!$index"></option>
                                 </select>
                             </div>
 
-                            <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
+                            <div class="gmap__new-type-name">
                                 <input ng-model="ct_name_to_add" />
-                                <p ng-show="!ct_name_to_add" style="margin: 0; color: #c00; font-size: 11px;">Please enter name!</p>
+                                <p ng-show="!ct_name_to_add" class="gmap__error-msg">Please enter name!</p>
                             </div>
                             <button class="gmap__add-new-type-btn" ng-click="addCenterType()">Add</button>
                             <a href="" ng-click="is_add_center_type_panel_open = false; $event.stopPropagation();">Close</a>
@@ -65,7 +68,7 @@
                     <!-- CENTER TYPES -->
 
 
-                    <div style="background: #fffff1;  padding: 5px; border: 1px solid #fafaba;">
+                    <div class="gmap__info">
                         <h2 class="gmap__title">Info of the current center</h2>
                         <ul>
                             <li ng-show="getCentersNumber()">

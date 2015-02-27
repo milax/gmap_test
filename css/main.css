@@ -317,11 +317,6 @@ body {
     width: 100%;
 }
 
-.gmap select {
-    width: 210px;
-    display: block;
-}
-
 .gmap input[type="text"] {
     width: 100%;
     box-sizing: border-box;
@@ -425,4 +420,58 @@ body {
 .gmap__title {
     margin: 0 0 15px;
     font-size: 20px;
+}
+
+.gmap__quick-go-box {
+    background: #fff1f1;
+    padding: 5px;
+    border: 1px solid #ffd3d3;
+}
+
+.gmap__ct {
+    background: #f1fffd;
+    padding: 5px;
+    border: 1px solid #c4fcf4;
+}
+
+.gmap__adding-new-type {
+    padding: 10px;
+    border: 1px dotted #ccc;
+}
+
+.gmap__add-new-type-selector-holder {
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: 10px;
+}
+
+.gmap__add-new-type-selector {
+    width: 75px;
+}
+
+.gmap__new-type-name {
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: 10px;
+}
+
+.gmap__error-msg {
+    margin: 0;
+    color: #c00;
+    font-size: 11px;
+}
+
+.gmap__info {
+    background: #fffff1;
+    padding: 5px;
+    border: 1px solid #fafaba;
+}
+
+#address-to-go {
+    width: 100%;
+}
+#added-new-type-msg {
+    display: none;
+    color: green;
+    font-size: 11px;
 }
