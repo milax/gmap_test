@@ -19,7 +19,7 @@
             <div class="gmap__info-panel">
 
                     <select>
-                        <option ng-repeat="address in addresses">{{address}}</option>
+                        <option ng-repeat="address in addresses | filter:'!!'">{{address}}</option>
                     </select>
 
                     <!-- CENTER TYPES -->
@@ -29,8 +29,8 @@
                         <h2>Center types</h2>
                         <div ng-show="cts_added.length">
                             <span>Active:</span>
-                            <select ng-model="active_ct_index" class="gmap__active-ct" id="active-center-type">
-                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
+                            <select class="gmap__active-ct" id="active-center-type">
+                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}" ng-selected="!$index">{{center.name}}</option>
                             </select>
                             <span id="added-new-type-msg" style="display: none; color: green; font-size: 11px;">Added new type!</span>
                         </div>
@@ -43,8 +43,8 @@
                         <div style="padding: 10px; border: 1px dotted #ccc;" ng-show="is_add_center_type_panel_open && cts_colors_to_add.length">
                             <h2>Adding new center type</h2>
                             <div style="display: inline-block; vertical-align: top; margin-bottom: 10px;">
-                                <select ng-model="active_ct_color_to_add_index" class="gmap__add-new-type-selector" style="width: 75px;">
-                                    <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="$index == 0"></option>
+                                <select class="gmap__add-new-type-selector" style="width: 75px;">
+                                    <option on-finish-render="ngRepeatFinished" ng-repeat="color in cts_colors_to_add" value="{{$index}}" ng-selected="!$index"></option>
                                 </select>
                             </div>
 

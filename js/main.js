@@ -10,7 +10,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     geocoder,
     markers = [],
     active_marker,
-    marker_id = 0;
+    marker_id = 0, active_marker_id = 0, marker_ids = [];
 
   var center_types = {
     colors: {
@@ -55,10 +55,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   */
   var init = function() {
     $scope.cts_added = center_types.added;
-    $scope.active_ct_index = 0;
-
+    
     $scope.cts_colors_to_add = center_types.colors.to_add;
-    $scope.active_ct_color_to_add_index = 0;
 
     $scope.addresses = [];
 
@@ -70,6 +68,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
 
     // attach events
     gmaps.event.addListener(map, "click", addNewMarkerByClick);
+    $('#active-center-type').change(updateCenterTypeForMarker);
     // gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
 
     // setCenterTypesToAdd();
@@ -115,7 +114,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       }, function (result, status) {
         if (status == gmaps.GeocoderStatus.OK) {
           address = result[0].formatted_address;
-          updateAddressArray(address, active_marker.marker_id);
+          updateAddressArray(address);
           $scope.address = address;
           $scope.$apply();
         }
@@ -126,17 +125,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
   };
 
-  var updateAddressArrayWith = function(address, marker_id) {
-    var is_new = true;
-    for(var i in $scope.addresses) {
-      if($scope.addresses[i].address)
-    }
+  var updateAddressArray = function(address) {
     if($.inArray(address, $scope.addresses) === -1) {
-      if($.inArray(marker_id, marker_ids))
-      $scope.addresses.push({
-        address: address,
-        marker_id: marker_id
-      });
+      $scope.addresses[active_marker_id] = address;
+      if(!$.inArray(active_marker_id, marker_ids)) {
+        marker_ids.push(active_marker_id);
+      }
     }
   };
 
@@ -150,24 +144,27 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     });
   };
 
-  var getMarkerIconUrlByColorIndex = function(index) {
+  var updateCenterTypeForMarker = function() {
+    if(active_marker) {
+      active_marker.center_type = $scope.cts_added[$('#active-center-type').val()];
+      active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color, '-active'));
+    }
+  };
+
+  var getMarkerIconUrlByColorIndex = function(index, postfix) {
+    postfix = postfix || '';
     var ct_colors_legend = center_types.colors.legend;
-    return IMG_PATH + ct_colors_legend[index] + '.png';
+    return IMG_PATH + ct_colors_legend[index] + postfix + '.png';
   };
 
   /**
   * Add new marker with coords
   */
   var addNewMarker = function(coords) {
-    if($scope.is_filter_enabled && ($scope.active_center_type.name !== $scope.filter_selected_center_type.name)) {
-      alert('Please reset filter to add new center to the map!');
-      return;
-    }
-
     var marker = new gmaps.Marker({
         map: map,
         position: coords,
-        icon: getMarkerIconUrlByColorIndex($scope.cts_added[$scope.active_ct_index].color),
+        icon: getMarkerIconUrlByColorIndex($scope.cts_added[$('#active-center-type').val()].color),
         draggable: true
     });
 
@@ -188,19 +185,11 @@ app.controller('gmapController', function($scope, $q, $debounce) {
        return false;
     });
 
-    marker.center_type = $scope.cts_added[$scope.active_ct_index];
+    marker.center_type = $scope.cts_added[$('#active-center-type').val()];
     marker.marker_id = marker_id++;
     markers.push(marker);
 
-    updateAddressList();
-
     setMarkerActive(marker);
-
-    info_panel.updateWithCoords({
-      lat: coords.lat,
-      lng: coords.lng
-    });
-    info_panel.updateAddress();
   };
 
   var applyData = function(field) {
@@ -255,18 +244,21 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   */
   var setMarkerActive = function(marker) {
     if(active_marker) {
-      active_marker.setIcon(getMarkerIconUrlByColorIndex(marker.center_type.color));
+      active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color));
     }
     active_marker = marker;
-    active_marker.setIcon();
+    active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color, '-active'));
+    active_marker_id = active_marker.marker_id;
 
     info_panel.updateAllFields();
-    // updateCenterType();
   };
 
   var removeAllMarkersWithThisType = function(color_index) {
     for(var i = markers.length - 1; i >= 0; i--) {
       if(markers[i].center_type.color === color_index) {
+        $scope.addresses.splice(markers[i].marker_id, 1);
+        marker_ids.splice[markers[i].marker_id, 1];
+
         markers[i].setMap(null);
         markers.splice(i, 1);
       }
@@ -277,13 +269,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   $scope.addCenterType = function() {
     if($scope.ct_name_to_add) {
       $scope.cts_added.push({
-        color: $scope.cts_colors_to_add[$scope.active_ct_color_to_add_index],
+        color: $scope.cts_colors_to_add[$('.gmap__add-new-type-selector').val()],
         name: $scope.ct_name_to_add
       });
-      $scope.cts_colors_to_add.splice($scope.active_ct_color_to_add_index, 1);
-      $scope.active_ct_color_to_add_index = 0;
+      $scope.cts_colors_to_add.splice($('.gmap__add-new-type-selector').val(), 1);
       reinitCustomSelect($('.gmap__add-new-type-selector'));
-      
+
       $scope.ct_name_to_add = '';
 
       if(!$scope.cts_colors_to_add.length) {
@@ -298,24 +289,25 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   $scope.removeActiveCenterType = function() {
-    removeAllMarkersWithThisType($scope.cts_added[$scope.active_ct_index].color);
+    removeAllMarkersWithThisType($scope.cts_added[$('#active-center-type').val()].color);
 
-    $scope.cts_colors_to_add.push($scope.cts_added[$scope.active_ct_index].color);
-    $scope.cts_added.splice($scope.active_ct_index, 1);
-    $scope.active_ct_index = 0;
+    $scope.cts_colors_to_add.push($scope.cts_added[$('#active-center-type').val()].color);
+    $scope.cts_added.splice($('#active-center-type').val(), 1);
 
     reinitCustomSelect($('#active-center-type'));
-
 
     return false;
   };
 
   var reinitCustomSelect = function($select) {
-    $select.select2("destroy");
-    setTimeout(function(){
-      initCustomSelect($select);
-    }, 0);
+    (function($s){
+      $s.select2("destroy");
+      setTimeout(function(){
+        initCustomSelect($s);
+      }, 0);
+    })($select)
   };
+
 
   var initCustomSelect = function($select) {
     $select.select2({
