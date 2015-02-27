@@ -18,7 +18,7 @@
 
             <div class="gmap__info-panel">
 
-                    <div class="gmap__row" ng-show="getMarkersNumber()">
+                    <div class="gmap__row" ng-show="getCentersNumber()" style="background: #fff1f1; padding: 5px; border: 1px solid #ffd3d3;">
                         <h2>Quick go to the address</h2>
                         <select id="address-to-go" style="width: 100%;">
                             <option ng-repeat="address in addresses | filter:'!!'" value="{{addresses.indexOf(address)}}">{{address.text}}</option>
@@ -27,7 +27,7 @@
                     </div>
 
                     <!-- CENTER TYPES -->
-                    <div class="gmap__row gmap__ct">
+                    <div class="gmap__row gmap__ct" style="background: #f1fffd; padding: 5px; border: 1px solid #c4fcf4;">
 
                         <!-- added center types -->
                         <h2>Center types</h2>
@@ -64,51 +64,63 @@
                     </div>
                     <!-- CENTER TYPES -->
 
-                    <h2>Info of the current center</h2>
-                    <!-- COORDS -->
-                    <div class="gmap__row clearfix">
-                        <div class="gmap__lat">
-                            <label>Lat</label>
-                            <input type="text" ng-model="lat" readonly>
+
+                    <div style="background: #fffff1;  padding: 5px; border: 1px solid #fafaba;">
+                        <h2>Info of the current center</h2>
+                        <ul>
+                            <li ng-show="getCentersNumber()">
+                                <a href="#" ng-click="removeAllCenters()">Remove ALL centers</a>
+                            </li>
+                            <li ng-show="address">
+                                <a href="#" ng-click="removeThisCenter()">Remove this center from the map</a>
+                            </li>
+                        </ul>
+
+                        <!-- COORDS -->
+                        <div class="gmap__row clearfix" ng-show="address">
+                            <div class="gmap__lat">
+                                <label>Lat</label>
+                                <input type="text" ng-model="lat" readonly>
+                            </div>
+                            <div class="gmap__lng">
+                                <label>Lng</label>
+                                <input type="text" ng-model="lng" readonly>
+                            </div>
                         </div>
-                        <div class="gmap__lng">
-                            <label>Lng</label>
-                            <input type="text" ng-model="lng" readonly>
+                        <!-- /COORDS -->
+
+                        <!-- ADDRESS -->
+                        <div class="gmap__address">
+                            <h3 class="gmap__title">Address:</h3>
+                            <p ng-show="address">{{address}}</p>
+                            <div class="alert-box" ng-hide="address">
+                                Please add a new center or pick an existing on the map
+                            </div>
                         </div>
-                    </div>
-                    <!-- /COORDS -->
+                        <!-- /ADDRESS -->
 
-                    <!-- ADDRESS -->
-                    <div class="gmap__address">
-                        <h3 class="gmap__title">Address:</h3>
-                        <p ng-show="address">{{address}}</p>
-                        <div class="alert-box" ng-hide="address">
-                            Please add a new center or pick an existing on the map
+
+                        <!-- CONTACT PERSONS -->
+                        <div class="gmap__row" ng-show="address">
+                            <label>Contact persons</label>
+                            <textarea ng-model="contact_details" class="gmap__contact-details"></textarea>
                         </div>
-                    </div>
-                    <!-- /ADDRESS -->
+                        <!-- /CONTACT PERSONS -->
 
+                        <!-- PNONES -->
+                        <div class="gmap__row" ng-show="address">
+                            <label>Phones</label>
+                            <textarea ng-model="phones" class="gmap__phones"></textarea>
+                        </div>
+                        <!-- /PNONES -->
 
-                    <!-- CONTACT PERSONS -->
-                    <div class="gmap__row" ng-show="address">
-                        <label>Contact persons</label>
-                        <textarea ng-model="contact_details" class="gmap__contact-details"></textarea>
+                        <!-- OPENING HOURS -->
+                        <div class="gmap__row" ng-show="address">
+                            <label>Opening hours</label>
+                            <textarea ng-model="opening_hours" class="gmap__opening-hours"></textarea>
+                        </div>
+                        <!-- /OPENING HOURS -->
                     </div>
-                    <!-- /CONTACT PERSONS -->
-
-                    <!-- PNONES -->
-                    <div class="gmap__row" ng-show="address">
-                        <label>Phones</label>
-                        <textarea ng-model="phones" class="gmap__phones"></textarea>
-                    </div>
-                    <!-- /PNONES -->
-
-                    <!-- OPENING HOURS -->
-                    <div class="gmap__row" ng-show="address">
-                        <label>Opening hours</label>
-                        <textarea ng-model="opening_hours" class="gmap__opening-hours"></textarea>
-                    </div>
-                    <!-- /OPENING HOURS -->
 
             </div>
         </div>

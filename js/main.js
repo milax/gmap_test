@@ -125,7 +125,31 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
   };
 
-  $scope.getMarkersNumber = function(){
+  $scope.removeAllCenters = function() {
+    for(var i = 0, len = markers.length; i < len; ++i) {
+      markers[i].setMap(null);
+    }
+    info_panel.clearData();
+    markers = [];
+    $scope.addresses = [];
+    return false;
+
+  }
+
+  $scope.removeThisCenter = function() {
+    for(var i = 0, len = markers.length; i < len; ++i) {
+      if(markers[i].marker_id === active_marker_id) {
+        active_marker.setMap(null);
+        markers.splice(i, 1);
+        info_panel.clearData();
+        break;
+      }
+    }
+    updateAddressArray();
+    return false;
+  };
+
+  $scope.getCentersNumber = function(){
     return markers.length;
   };
 
@@ -141,7 +165,11 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   var updateAddressArray = function(address) {
-    if($.inArray(address, $scope.addresses) === -1) {
+    if(!address) {
+      $scope.addresses.splice(active_marker_id, 1);
+      marker_ids.splice[active_marker_id, 1];
+    }
+    else if($.inArray(address, $scope.addresses) === -1) {
       if(!$scope.addresses[active_marker_id]) {
         $scope.addresses[active_marker_id] = {};
       }
