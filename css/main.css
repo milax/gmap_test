@@ -328,6 +328,10 @@ body {
     height: 100px;
 }
 
+.gmap__active-ct {
+    width: 210px;
+}
+
 .gmap__search-box {
     padding: 10px;
     margin-bottom: 10px;
@@ -429,9 +433,29 @@ body {
 }
 
 .gmap__ct {
+    position: relative;
     background: #f1fffd;
     padding: 5px;
     border: 1px solid #c4fcf4;
+}
+.gmap__ct-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.gmap__ct-overlay:after {
+    content: 'Please reset the filter to enable';
+    white-space: nowrap;
+    padding: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: #fff;
+    transform: translate(-50%, -50%);
 }
 
 .gmap__adding-new-type {
@@ -465,6 +489,13 @@ body {
     background: #fffff1;
     padding: 5px;
     border: 1px solid #fafaba;
+}
+
+.gmap__filter-box {
+    background: #f7f6ff;
+    padding: 10px;
+    border: 1px solid #d2c9ff;
+    margin-bottom: 15px;
 }
 
 #address-to-go {

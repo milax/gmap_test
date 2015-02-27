@@ -14,6 +14,19 @@
 
 
         <div class="gmap" ng-controller="gmapController">
+
+            <div class="gmap__filter-box">
+                <p>
+                    Filter by type of center: 
+                    <select id="ct-index-to-filter">
+                        <option ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
+                    </select>
+                    <button ng-click="setFilter()">Filter!</button>
+                    <button ng-click="resetFilter()" ng-show="is_filter_enabled">&#10005; Reset filter</button>
+                </p>
+                <p></p>
+            </div>
+
             <div id="map" class="gmap_map"></div>
 
             <div class="gmap__info-panel">
@@ -63,7 +76,7 @@
                             <a href="" ng-click="is_add_center_type_panel_open = false; $event.stopPropagation();">Close</a>
                         </div>
                         
-
+                        <div class="gmap__ct-overlay" ng-show="is_filter_enabled"></div>
                     </div>
                     <!-- CENTER TYPES -->
 
