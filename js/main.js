@@ -125,9 +125,31 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
   };
 
+  $scope.getMarkersNumber = function(){
+    return markers.length;
+  };
+
+  $scope.goToAddress = function() {
+    var address_to_go_index = $('#address-to-go').val();
+    for(var i in markers) {
+      if(markers[i].marker_id == address_to_go_index) {
+        setMarkerActive(markers[i]);
+        map.setCenter(markers[i].getPosition());
+        break;
+      }
+    }
+  };
+
   var updateAddressArray = function(address) {
     if($.inArray(address, $scope.addresses) === -1) {
-      $scope.addresses[active_marker_id] = address;
+      if(!$scope.addresses[active_marker_id]) {
+        $scope.addresses[active_marker_id] = {};
+      }
+      $scope.addresses[active_marker_id].text = address;
+      $scope.addresses[active_marker_id].coords = {
+        lat: active_marker.position.D,
+        lng: active_marker.position.k
+      };
       if(!$.inArray(active_marker_id, marker_ids)) {
         marker_ids.push(active_marker_id);
       }

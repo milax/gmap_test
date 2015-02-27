@@ -18,9 +18,13 @@
 
             <div class="gmap__info-panel">
 
-                    <select>
-                        <option ng-repeat="address in addresses | filter:'!!'">{{address}}</option>
-                    </select>
+                    <div class="gmap__row" ng-show="getMarkersNumber()">
+                        <h2>Quick go to the address</h2>
+                        <select id="address-to-go" style="width: 100%;">
+                            <option ng-repeat="address in addresses | filter:'!!'" value="{{addresses.indexOf(address)}}">{{address.text}}</option>
+                        </select>
+                        <button ng-click="goToAddress()">Go!</button>
+                    </div>
 
                     <!-- CENTER TYPES -->
                     <div class="gmap__row gmap__ct">
