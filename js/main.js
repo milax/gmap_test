@@ -97,6 +97,9 @@ app.controller('gmapController', function($scope, $q, $debounce) {
 
     map.fitBounds(fullBounds);
 
+    
+    $('#active-center-type').val(markers[markers.length - 1].center_type.color);
+
   };
 
   var info_panel = {
@@ -262,7 +265,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     addNewMarker({
       lat: e.latLng.k,
       lng: e.latLng.D
-    });
+    }, true);
   };
 
   var updateCenterTypeForMarker = function() {
@@ -299,7 +302,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     });
 
     gmaps.event.addListener(marker, "click", function(e) {
-      setMarkerActive(marker);
+      setMarkerActive(marker, true);
     });
 
     gmaps.event.addListener(marker, "dblclick", function (e) {
@@ -368,19 +371,13 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   /**
   * Set the marker active
   */
-  var setMarkerActive = function(marker) {
+  var setMarkerActive = function(marker, by_click) {
     if(active_marker) {
       active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color));
     }
     active_marker = marker;
     active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color, '-active'));
     active_marker_id = active_marker.marker_id;
-
-    // $('#active-center-type option').each(function(i){
-    //   if($(this).attr('data-color') == active_marker.center_type.color) {
-    //     $('#active-center-type option').val(i);
-    //   }
-    // })
 
     info_panel.updateAllFields();
   };
