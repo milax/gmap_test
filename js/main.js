@@ -10,7 +10,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     geocoder,
     markers = [],
     active_marker,
-    marker_id = 0, active_marker_id = 0, marker_ids = [];
+    marker_id = 0, active_marker_id = 0, marker_ids = [],
+    searchBox;
 
   var center_types = {
     colors: {
@@ -66,10 +67,14 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     map      = new gmaps.Map(document.getElementById('map'), mapOpts);
     geocoder = new gmaps.Geocoder();
 
+
+    var search_address_input = document.getElementById('search-address');
+    searchBox     = new gmaps.places.SearchBox(search_address_input);
+
     // attach events
     gmaps.event.addListener(map, "click", addNewMarkerByClick);
     $('#active-center-type').change(updateCenterTypeForMarker);
-    // gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
+    gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
 
     // setCenterTypesToAdd();
   };
@@ -212,6 +217,24 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         marker_ids.push(active_marker_id);
       }
     }
+  };
+
+  /**
+  * Address input has been changed
+  */
+  var placesChanged = function(e) {
+    var
+      places = searchBox.getPlaces(),
+      place;
+
+    if(!places.length) {
+      return;
+    }
+
+    place = places[0];
+
+    map.setCenter(place.geometry.location);
+    map.setZoom(14);
   };
 
   /**
