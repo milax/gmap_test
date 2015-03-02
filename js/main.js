@@ -283,7 +283,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   * Add new marker by click on the map
   */
   var addNewMarkerByClick = function(e) {
-    if($scope.is_filter_enabled) {
+    if($scope.is_filter_enabled || !markers.length) {
       return;
     }
     addNewMarker({
