@@ -62,7 +62,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       map      = new gmaps.Map(document.getElementById('map'), mapOpts);
       geocoder = new gmaps.Geocoder();
 
-      center_types = res[0]['center_types'];
+      center_types = res[0].center_types;
 
       $scope.cts_added = center_types.added;
       $scope.cts_colors_to_add = center_types.colors.to_add;
@@ -78,8 +78,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
       $('#active-center-type').change(updateCenterTypeForMarker);
 
-      renderMarkersOnInit(res[0]['markers']);
-    })
+      renderMarkersOnInit(res[0].markers);
+    });
   };
 
   var renderMarkersOnInit = function(ms) {
@@ -165,12 +165,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         address: curr_marker.address || '',
         opening_hours: curr_marker.opening_hours || '',
         contact_details: curr_marker.contact_details || ''
-      })
+      });
     }
     data_to_send.markers = markers_to_send;
     data_to_send.center_types = center_types;
     // format array to save data
-    console.log(JSON.stringify(data_to_send))
+    console.log(JSON.stringify(data_to_send));
   };
 
   $scope.addCenterByAddress = function() {
@@ -178,7 +178,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       addNewMarker(place_coords);
     }
     else {
-      alert(1)
+      alert(1);
     }
   };
 
@@ -213,7 +213,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   var updateAddressArray = function(address) {
     if(!address) {
       $scope.addresses.splice(active_marker_id, 1);
-      marker_ids.splice[active_marker_id, 1];
+      marker_ids.splice(active_marker_id, 1);
     }
     else if($.inArray(address, $scope.addresses) === -1) {
       if(!$scope.addresses[active_marker_id]) {
@@ -224,7 +224,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         lng: active_marker.position.D,
         lat: active_marker.position.k
       };
-      if(!$.inArray(active_marker_id, marker_ids)) {
+      if(!$.inArray(active_marker_id, marker_ids)) {  
         marker_ids.push(active_marker_id);
       }
     }
@@ -256,7 +256,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   * Add new marker by click on the map
   */
   var addNewMarkerByClick = function(e) {
-    if(!markers.length) {
+    if(!$scope.cts_added.length) {
       return;
     }
     addNewMarker({
@@ -387,11 +387,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
 
   var removeAllMarkersWithThisType = function(color_index) {
     for(var i = markers.length - 1; i >= 0; i--) {
-      if(markers[i].center_type.color === color_index) {
-        $scope.addresses.splice(markers[i].marker_id, 1);
-        marker_ids.splice[markers[i].marker_id, 1];
+      var m = markers[i];
+      if(m.center_type.color === color_index) {
+        $scope.addresses.splice(m.marker_id, 1);
+        marker_ids.splice(m.marker_id, 1);
 
-        markers[i].setMap(null);
+        m.setMap(null);
         markers.splice(i, 1);
       }
     }
@@ -437,7 +438,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       setTimeout(function(){
         initCustomSelect($s);
       }, 0);
-    })($select)
+    })($select);
   };
 
 
