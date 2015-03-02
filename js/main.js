@@ -172,46 +172,6 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     console.log(JSON.stringify(data_to_send))
   };
 
-  $scope.setFilter = function() {
-
-    var hidden_markers = 0;
-
-    var ct_index_to_filter = $scope.cts_added[$('#ct-index-to-filter').val()].color;
-
-
-    for(var i in markers) {
-      if(markers[i].center_type.color === ct_index_to_filter) {
-        markers[i].setVisible(true);
-      }
-      else {
-        hidden_markers++;
-        markers[i].setVisible(false);
-      }
-    }
-
-    $scope.is_filter_enabled = !!hidden_markers;
-
-    // $scope.is_allowed_changes = active_marker.center_type.name !== $scope.filter_selected_center_type.name;
-  };
-
-  $scope.resetFilter = function() {
-    for(var i in markers) {
-      markers[i].setVisible(true);
-    }
-    $scope.is_filter_enabled = false;
-    $scope.is_allowed_changes = true;
-  };
-
-  $scope.removeAllCenters = function() {
-    for(var i = 0, len = markers.length; i < len; ++i) {
-      markers[i].setMap(null);
-    }
-    info_panel.clearData();
-    markers = [];
-    $scope.addresses = [];
-    return false;
-
-  }
 
   $scope.removeThisCenter = function() {
     for(var i = 0, len = markers.length; i < len; ++i) {
@@ -283,7 +243,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   * Add new marker by click on the map
   */
   var addNewMarkerByClick = function(e) {
-    if($scope.is_filter_enabled || !markers.length) {
+    if(!markers.length) {
       return;
     }
     addNewMarker({

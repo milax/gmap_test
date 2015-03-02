@@ -15,18 +15,6 @@
 
         <div class="gmap" ng-controller="gmapController">
 
-            <div class="gmap__filter-box">
-                <p>
-                    Filter by type of center: 
-                    <select id="ct-index-to-filter">
-                        <option ng-repeat="center in cts_added" value="{{$index}}">{{center.name}}</option>
-                    </select>
-                    <button ng-click="setFilter()">Filter!</button>
-                    <button ng-click="resetFilter()" ng-show="is_filter_enabled">&#10005; Reset filter</button>
-                </p>
-                <p></p>
-            </div>
-
             <div class="gmap__search-box">
                 Search an address:
                 <input type="text" ng-model="search_address" id="search-address" class="gmap__search-address">
@@ -94,17 +82,13 @@
 
                     <div class="gmap__info">
                         <h2 class="gmap__title">Info of the current center</h2>
-                        <ul>
-                            <li ng-show="getCentersNumber()">
-                                <a href="" ng-click="removeAllCenters()">Remove ALL centers</a>
-                            </li>
-                            <li ng-show="address">
-                                <a href="" ng-click="removeThisCenter()">Remove this center from the map</a>
-                            </li>
-                        </ul>
+
+                        <p ng-show="address">
+                            <a href="" ng-click="removeThisCenter()">Remove the center from the map</a>
+                        </p>
 
                         <!-- COORDS -->
-                        <div class="gmap__row clearfix" ng-show="address">
+                        <div class="gmap__row clearfix" ng-show="false">
                             <div class="gmap__lat">
                                 <label>Lat</label>
                                 <input type="text" ng-model="lat" readonly>
