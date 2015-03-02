@@ -11,7 +11,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     markers = [],
     active_marker,
     marker_id = 0, active_marker_id = 0, marker_ids = [],
-    searchBox;
+    searchBox,
+    place_coords;
 
   // var center_types = {
   //   colors: {
@@ -173,10 +174,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   };
 
   $scope.addCenterByAddress = function() {
-    var e = $.Event('keypress');
-    e.which = 13; // #13 = Enter key
-    $("#search-address").focus();
-    $("#search-address").trigger(e);
+    if(place_coords) {
+      addNewMarker(place_coords);
+    }
+    else {
+      alert(1)
+    }
   };
 
   $scope.removeThisCenter = function() {
@@ -240,11 +243,10 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
 
     place = places[0];
-
-    addNewMarker({
+    place_coords = {
       lat: place.geometry.location.k,
       lng: place.geometry.location.D
-    });
+    };
 
     map.setCenter(place.geometry.location);
     map.setZoom(14);
