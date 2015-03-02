@@ -172,6 +172,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     console.log(JSON.stringify(data_to_send))
   };
 
+  $scope.addCenterByAddress = function() {
+    var e = $.Event('keypress');
+    e.which = 13; // #13 = Enter key
+    $("#search-address").focus();
+    $("#search-address").trigger(e);
+  };
 
   $scope.removeThisCenter = function() {
     for(var i = 0, len = markers.length; i < len; ++i) {
@@ -234,6 +240,11 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     }
 
     place = places[0];
+
+    addNewMarker({
+      lat: place.geometry.location.k,
+      lng: place.geometry.location.D
+    });
 
     map.setCenter(place.geometry.location);
     map.setZoom(14);
