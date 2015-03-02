@@ -35,7 +35,10 @@
                 </span>
             </div>
 
-            <div id="map" class="gmap_map"></div>
+            <div class="gmap__map-holder">
+                <div id="map" class="gmap__map"></div>
+                <button ng-click="saveChanges()">SAVE!</button>
+            </div>
 
             <div class="gmap__info-panel">
 
@@ -54,7 +57,7 @@
                         <div ng-show="cts_added.length">
                             <span>Active:</span>
                             <select class="gmap__active-ct" id="active-center-type">
-                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}" ng-selected="!$index">{{center.name}}</option>
+                                <option on-finish-render="ngRepeatFinished" ng-repeat="center in cts_added" value="{{$index}}" data-color="{{center.color}}" ng-selected="!$index">{{center.name}}</option>
                             </select>
                             <span id="added-new-type-msg">Added new type!</span>
                         </div>

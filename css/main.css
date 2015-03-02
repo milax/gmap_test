@@ -299,11 +299,14 @@ body {
     margin-bottom: 20px;
 }
 
-.gmap_map {
-    width: 500px;
-    height: 500px;
+.gmap__map-holder {
     float: right;
     margin-left: 20px;
+}
+.gmap__map {
+    width: 500px;
+    height: 500px;
+    margin-bottom: 20px;
 }
 
 .gmap__info-panel {

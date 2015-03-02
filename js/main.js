@@ -13,32 +13,32 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     marker_id = 0, active_marker_id = 0, marker_ids = [],
     searchBox;
 
-  var center_types = {
-    colors: {
-      legend: [
-        'blue',       // 0
-        'yellow',     // 1
-        'light-blue', // 2
-        'cyan',       // 3
-        'green',      // 4
-        'red',        // 5
-        'grey'        // 6
-      ],
-      added: [ 0, 2, 4 ],
-      to_add: [ 1, 3, 5, 6 ]
-    },
+  // var center_types = {
+  //   colors: {
+  //     legend: [
+  //       'blue',       // 0
+  //       'yellow',     // 1
+  //       'light-blue', // 2
+  //       'cyan',       // 3
+  //       'green',      // 4
+  //       'red',        // 5
+  //       'grey'        // 6
+  //     ],
+  //     to_add: [ 1, 3, 5, 6 ]
+  //   },
 
-    added: [{
-        name: 'Sprogcenter',
-        color: 0
-      }, {
-        name: 'Undervisningscenter',
-        color: 2
-      }, {
-        name: 'Kontor',
-        color: 4
-      }]
-  };
+  //   added: [{
+  //       name: 'Sprogcenter',
+  //       color: 0
+  //     }, {
+  //       name: 'Undervisningscenter',
+  //       color: 2
+  //     }, {
+  //       name: 'Kontor',
+  //       color: 4
+  //     }]
+  // };
+  var center_types = {};
 
   var IMG_PATH = 'img/';
 
@@ -55,28 +55,48 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   * init map
   */
   var init = function() {
-    $scope.cts_added = center_types.added;
-    
-    $scope.cts_colors_to_add = center_types.colors.to_add;
 
-    $scope.addresses = [];
+    $.getJSON('http://private-0f369-centers1.apiary-mock.com/getCenters', function(res){
+      gmaps    = google.maps;
+      map      = new gmaps.Map(document.getElementById('map'), mapOpts);
+      geocoder = new gmaps.Geocoder();
 
-    $scope.$apply();
+      center_types = res[0]['center_types'];
 
-    gmaps    = google.maps;
-    map      = new gmaps.Map(document.getElementById('map'), mapOpts);
-    geocoder = new gmaps.Geocoder();
+      $scope.cts_added = center_types.added;
+      $scope.cts_colors_to_add = center_types.colors.to_add;
+      $scope.addresses = [];
+      $scope.$apply();
 
 
-    var search_address_input = document.getElementById('search-address');
-    searchBox     = new gmaps.places.SearchBox(search_address_input);
+      var search_address_input = document.getElementById('search-address');
+      searchBox     = new gmaps.places.SearchBox(search_address_input);
 
-    // attach events
-    gmaps.event.addListener(map, "click", addNewMarkerByClick);
-    $('#active-center-type').change(updateCenterTypeForMarker);
-    gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
+      // attach events
+      gmaps.event.addListener(map, "click", addNewMarkerByClick);
+      gmaps.event.addListener(searchBox, 'places_changed', placesChanged);
+      $('#active-center-type').change(updateCenterTypeForMarker);
 
-    // setCenterTypesToAdd();
+      renderMarkersOnInit(res[0]['markers']);
+    })
+  };
+
+  var renderMarkersOnInit = function(ms) {
+
+    console.log(gmaps.LatLngBounds)
+    var fullBounds = new gmaps.LatLngBounds();
+
+    for(var i in ms) {
+      addNewMarker({
+        lat: ms[i].coords.lat,
+        lng: ms[i].coords.lng
+      }, ms[i].center_type);
+
+      fullBounds.extend(new gmaps.LatLng(ms[i].coords.lat, ms[i].coords.lng));
+    }
+
+    map.fitBounds(fullBounds);
+
   };
 
   var info_panel = {
@@ -128,6 +148,29 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         }
       });
     }
+  };
+
+  $scope.saveChanges = function() {
+    var i, markers_to_send = [], curr_marker, data_to_send = {};
+    console.log(markers);
+    for(i in markers) {
+      curr_marker = markers[i];
+      markers_to_send.push({
+        coords: {
+          lng: curr_marker.position.D,
+          lat: curr_marker.position.k
+        },
+        center_type: curr_marker.center_type,
+        phones: curr_marker.phones || '',
+        address: curr_marker.address || '',
+        opening_hours: curr_marker.opening_hours || '',
+        contact_details: curr_marker.contact_details || ''
+      })
+    }
+    data_to_send.markers = markers_to_send;
+    data_to_send.center_types = center_types;
+    // format array to save data
+    console.log(JSON.stringify(data_to_send))
   };
 
   $scope.setFilter = function() {
@@ -210,8 +253,8 @@ app.controller('gmapController', function($scope, $q, $debounce) {
       }
       $scope.addresses[active_marker_id].text = address;
       $scope.addresses[active_marker_id].coords = {
-        lat: active_marker.position.D,
-        lng: active_marker.position.k
+        lng: active_marker.position.D,
+        lat: active_marker.position.k
       };
       if(!$.inArray(active_marker_id, marker_ids)) {
         marker_ids.push(active_marker_id);
@@ -266,7 +309,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
   /**
   * Add new marker with coords
   */
-  var addNewMarker = function(coords) {
+  var addNewMarker = function(coords, forced_center_type) {
     var marker = new gmaps.Marker({
         map: map,
         position: coords,
@@ -291,7 +334,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
        return false;
     });
 
-    marker.center_type = $scope.cts_added[$('#active-center-type').val()];
+    if(forced_center_type) {
+      marker.center_type = forced_center_type;
+    }
+    else {
+      marker.center_type = $scope.cts_added[$('#active-center-type').val()];
+    }
     marker.marker_id = marker_id++;
     markers.push(marker);
 
@@ -355,6 +403,12 @@ app.controller('gmapController', function($scope, $q, $debounce) {
     active_marker = marker;
     active_marker.setIcon(getMarkerIconUrlByColorIndex(active_marker.center_type.color, '-active'));
     active_marker_id = active_marker.marker_id;
+
+    // $('#active-center-type option').each(function(i){
+    //   if($(this).attr('data-color') == active_marker.center_type.color) {
+    //     $('#active-center-type option').val(i);
+    //   }
+    // })
 
     info_panel.updateAllFields();
   };
