@@ -83,7 +83,6 @@ app.controller('gmapController', function($scope, $q, $debounce) {
 
   var renderMarkersOnInit = function(ms) {
 
-    console.log(gmaps.LatLngBounds)
     var fullBounds = new gmaps.LatLngBounds();
 
     for(var i in ms) {
@@ -493,7 +492,7 @@ app.controller('gmapController', function($scope, $q, $debounce) {
         index = $scope.cts_added[opt.id].color;
       }
 
-      option = '<span style="white-space: nowrap"><img src="../' + IMG_PATH;
+      option = '<span style="white-space: nowrap"><img src="' + IMG_PATH;
       option += ct_colors_legend[index];
       option += '-small.png" />' + opt.text + '</span>';
 
